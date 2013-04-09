@@ -4,7 +4,10 @@ import static rabbitmq.Common.encodeSlashes;
 
 import java.util.Collection;
 
+import com.sun.jersey.api.client.GenericType;
+
 import rabbitmq.mgmt.model.Permission;
+import rabbitmq.mgmt.model.Status;
 import rabbitmq.mgmt.model.VirtualHost;
 
 
@@ -22,6 +25,17 @@ public class VirtualHostOperations extends BaseFluent {
 	public VirtualHost get(String vhost){
 		
 		return HTTP.GET(String.format("/vhosts/%s", encodeSlashes(vhost)), VHOST);
+	}
+	
+	public Status status(){
+		
+		return this.status("/");
+	}
+	
+	public Status status(String vhost){
+		
+		return HTTP.GET(
+			String.format("/aliveness-test/%s", encodeSlashes(vhost)), new GenericType<Status>(){});
 	}
 	
 	public Collection<Permission> permissions(){

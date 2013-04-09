@@ -4,14 +4,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rabbitmq.httpclient.HttpClientProvider;
-
+import rabbitmq.mgmt.model.Overview;
 
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.GenericType;
 
-/*
-curl -H "Content-Type: application/json" -X PUT -d '{"name":"my.created.exchange2","vhost":"/","type":"direct","durable":true,"auto_delete":false,"internal":false}' -u guest:guest -v http://localhost:15672/api/exchanges/%2F/my.created.exchange2
-*/
-
+/**
+ * Java binding to the RabbitMQ Management Service.
+ * 
+ * @author Richard Clayton (Berico Technologies)
+ */
 public class RabbitMgmtService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(RabbitMgmtService.class);
@@ -99,6 +101,15 @@ public class RabbitMgmtService {
 	}
 	
 	/**
+	 * Get the overview for this node.
+	 * @return Overview of the node with stats about usage.
+	 */
+	public Overview overview(){
+		
+		return this.httpContext.GET("/overview", new GenericType<Overview>(){});
+	}
+	
+	/**
 	 * Get operations related to exchanges.
 	 * @return Exchange Operations
 	 */
@@ -142,5 +153,14 @@ public class RabbitMgmtService {
 	public PermissionOperations permissions(){
 		
 		return new PermissionOperations(httpContext, this);
+	}
+	
+	/**
+	 * Get operations related to nodes.
+	 * @return Node Operations
+	 */
+	public NodeOperations nodes(){
+		
+		return new NodeOperations(httpContext, this);
 	}
 }

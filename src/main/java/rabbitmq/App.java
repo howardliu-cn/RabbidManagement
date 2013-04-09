@@ -11,11 +11,6 @@ import rabbitmq.mgmt.model.Exchange;
 import rabbitmq.mgmt.model.Queue;
 
 
-
-/**
- * Hello world!
- *
- */
 public class App 
 {
 	private static final Logger logger = LoggerFactory.getLogger(App.class);
@@ -62,6 +57,14 @@ public class App
     		q.setVhost("/");
     		
     		log(mgmt.queues().create(q).get("test-queue"));
+    		
+    		log(mgmt.nodes().all());
+    		
+    		log(mgmt.overview());
+    		
+    		log(mgmt.vhosts().status());
+    		
+    		log(mgmt.vhosts().status("test"));
     }
     
     public static void log(String template, Object... args){

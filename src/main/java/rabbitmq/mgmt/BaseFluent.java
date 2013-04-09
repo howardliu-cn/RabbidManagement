@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import rabbitmq.mgmt.model.Binding;
 import rabbitmq.mgmt.model.Exchange;
+import rabbitmq.mgmt.model.Node;
 import rabbitmq.mgmt.model.Permission;
 import rabbitmq.mgmt.model.Queue;
 import rabbitmq.mgmt.model.User;
@@ -34,6 +35,9 @@ public class BaseFluent {
 	
 	static final GenericType<User> USER = new GenericType<User>(){};
 	static final GenericType<Collection<User>> USER_COLLECTION = new GenericType<Collection<User>>(){};
+	
+	static final GenericType<Node> NODE = new GenericType<Node>(){};
+	static final GenericType<Collection<Node>> NODE_COLLECTION = new GenericType<Collection<Node>>(){};
 	
 	HttpContext HTTP;
 	RabbitMgmtService mgmtService;
