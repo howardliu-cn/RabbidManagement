@@ -23,7 +23,7 @@ public class App
     		
     		SslWithBasicAuthHttpClientProvider provider = 
     				new SslWithBasicAuthHttpClientProvider(
-    					15672, "ssl/jdoe.keycert.p12", "password123", "ssl/truststore.jks", "password", "guest", "guest");
+    					"ssl/jdoe.keycert.p12", "password123", "ssl/truststore.jks", "password", "guest", "guest");
     	
     		RabbitMgmtService mgmt = 
     			new RabbitMgmtService("rabbit3", 15672, true, provider).initialize();
