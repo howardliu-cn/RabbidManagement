@@ -2,6 +2,12 @@ package rabbitmq.mgmt.model;
 
 import java.util.Collection;
 
+/**
+ * Overview information for a single instance of the RabbitMQ Management Console
+ * (i.e. not everything is cluster information).
+ * 
+ * @author Richard Clayton (Berico Technologies)
+ */
 public class Overview {
 
 	protected String management_version;
@@ -16,23 +22,23 @@ public class Overview {
 	protected TopologyObjectTotals object_totals;
 	protected QueueTotals queue_totals;
 	
-	public String getManagement_version() {
+	public String getManagementConsoleVersion() {
 		return management_version;
 	}
 	
-	public String getStatistics_level() {
+	public String getStatisticsLevel() {
 		return statistics_level;
 	}
 	
-	public Collection<ExchangeType> getExchange_types() {
+	public Collection<ExchangeType> getExchangeTypes() {
 		return exchange_types;
 	}
 	
-	public String getRabbitmq_version() {
+	public String getRabbitMQVersion() {
 		return rabbitmq_version;
 	}
 	
-	public String getErlang_version() {
+	public String getErlangVersion() {
 		return erlang_version;
 	}
 	
@@ -40,7 +46,7 @@ public class Overview {
 		return node;
 	}
 	
-	public String getStatistics_db_node() {
+	public String getStatisticsNode() {
 		return statistics_db_node;
 	}
 	
@@ -52,11 +58,11 @@ public class Overview {
 		return listeners;
 	}
 	
-	public TopologyObjectTotals getObject_totals() {
+	public TopologyObjectTotals getTopologyObjectTotals() {
 		return object_totals;
 	}
 	
-	public QueueTotals getQueue_totals() {
+	public QueueTotals getQueueTotals() {
 		return queue_totals;
 	}
 	

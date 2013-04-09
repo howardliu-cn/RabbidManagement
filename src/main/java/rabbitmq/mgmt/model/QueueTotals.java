@@ -1,5 +1,10 @@
 package rabbitmq.mgmt.model;
 
+/**
+ * Global statistics of Queue usage in a RabbitMQ Cluster. 
+ * 
+ * @author Richard Clayton (Berico Technologies)
+ */
 public class QueueTotals {
 
 	protected long messages;
@@ -13,23 +18,23 @@ public class QueueTotals {
 		return messages;
 	}
 	
-	public long getMessages_ready() {
+	public long getMessagesReady() {
 		return messages_ready;
 	}
 	
-	public long getMessages_unacknowledged() {
+	public long getMessagesUnacknowledged() {
 		return messages_unacknowledged;
 	}
 	
-	public MessageDetails getMessages_details() {
+	public MessageDetails getMessagesDetails() {
 		return messages_details;
 	}
 	
-	public MessageDetails getMessages_ready_details() {
+	public MessageDetails getMessagesReadyDetails() {
 		return messages_ready_details;
 	}
 	
-	public MessageDetails getMessages_unacknowledged_details() {
+	public MessageDetails getMessagesUnacknowledgedDetails() {
 		return messages_unacknowledged_details;
 	}
 

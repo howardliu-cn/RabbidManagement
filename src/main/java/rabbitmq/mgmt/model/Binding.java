@@ -2,6 +2,11 @@ package rabbitmq.mgmt.model;
 
 import java.util.Map;
 
+/**
+ * Represents a binding between two Exchanges or an Exchange and a Queue.
+ * 
+ * @author Richard Clayton (Berico Technologies)
+ */
 public class Binding {
 	
 	protected String source;
@@ -13,6 +18,17 @@ public class Binding {
 	protected Map<String, String> arguments;
 	
 	public Binding(){}
+	
+	public Binding(
+			String vhost, String source, String destination,
+			String destination_type, String routing_key) {
+		
+		this.source = source;
+		this.vhost = vhost;
+		this.destination = destination;
+		this.destination_type = destination_type;
+		this.routing_key = routing_key;
+	}
 	
 	public Binding(String source, String vhost, String destination,
 			String destination_type, String routing_key, String properties_key,
@@ -77,6 +93,16 @@ public class Binding {
 	
 	public void setArguments(Map<String, String> arguments) {
 		this.arguments = arguments;
+	}
+	
+	public static Binding createBinding(Exchange exchange, Queue queue, String routingKey){
+		
+		return new Binding(exchange.getVhost(), exchange.getName(), queue.getName(), "queue", routingKey);
+	}
+	
+	public static Binding createBinding(Exchange exchange, Exchange destExchange, String routingKey){
+		
+		return new Binding(exchange.getVhost(), exchange.getName(), destExchange.getName(), "exchange", routingKey);
 	}
 	
 	@Override

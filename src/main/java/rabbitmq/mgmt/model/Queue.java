@@ -3,6 +3,11 @@ package rabbitmq.mgmt.model;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Represents an AMQP Queue.
+ * 
+ * @author Richard Clayton (Berico Technologies)
+ */
 public class Queue {
 
 	protected long memory;
@@ -17,8 +22,8 @@ public class Queue {
 	protected BackingQueueStatus backing_queue_status;
 	protected String name;
 	protected String vhost;
-	protected boolean durable;
-	protected boolean auto_delete;
+	protected boolean durable = false;
+	protected boolean auto_delete = false;
 	protected Map<String, String> arguments = new HashMap<String, String>();
 	protected String node;
 	protected MessageDetails messages_details;
@@ -26,6 +31,20 @@ public class Queue {
 	protected MessageDetails messages_unacknowledged_details;
 	
 	public Queue(){}
+	
+	public Queue(String name, String vhost) {
+		
+		this.name = name;
+		this.vhost = vhost;
+	}
+	
+	public Queue(String name, String vhost, boolean durable, boolean auto_delete) {
+		
+		this.name = name;
+		this.vhost = vhost;
+		this.durable = durable;
+		this.auto_delete = auto_delete;
+	}
 	
 	public Queue(String name, String vhost, boolean durable,
 			boolean auto_delete, Map<String, String> arguments) {

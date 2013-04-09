@@ -3,6 +3,11 @@ package rabbitmq.mgmt.model;
 import java.util.Arrays;
 import java.util.Collection;
 
+/**
+ * Information about a single node in a RabbitMQ cluster.
+ * 
+ * @author Richard Clayton (Berico Technologies)
+ */
 public class Node {
 
 	protected String name;
@@ -49,59 +54,59 @@ public class Node {
 		return partitions;
 	}
 
-	public String getOs_pid() {
+	public String getOSProcessID() {
 		return os_pid;
 	}
 
-	public int getFd_used() {
+	public int getFdUsed() {
 		return fd_used;
 	}
 
-	public int getFd_total() {
+	public int getFdTotal() {
 		return fd_total;
 	}
 
-	public int getSockets_used() {
+	public int getSocketsUsed() {
 		return sockets_used;
 	}
 
-	public int getSockets_total() {
+	public int getSocketsTotal() {
 		return sockets_total;
 	}
 
-	public long getMem_used() {
+	public long getMemoryUsed() {
 		return mem_used;
 	}
 
-	public long getMem_limit() {
+	public long getMemoryLimit() {
 		return mem_limit;
 	}
 
-	public boolean isMem_alarm() {
+	public boolean isMemoryThresholdCritical() {
 		return mem_alarm;
 	}
 
-	public long getDisk_free_limit() {
+	public long getDiskFreeLimit() {
 		return disk_free_limit;
 	}
 
-	public long getDisk_free() {
+	public long getDiskFree() {
 		return disk_free;
 	}
 
-	public boolean isDisk_free_alarm() {
+	public boolean isDiskFreeThresholdCritical() {
 		return disk_free_alarm;
 	}
 
-	public long getProc_used() {
+	public long getProcessesUsed() {
 		return proc_used;
 	}
 
-	public long getProc_total() {
+	public long getProcessesTotal() {
 		return proc_total;
 	}
 
-	public String getStatistics_level() {
+	public String getStatisticsLevel() {
 		return statistics_level;
 	}
 
@@ -109,7 +114,7 @@ public class Node {
 		return uptime;
 	}
 
-	public long getRun_queue() {
+	public long getRunQueue() {
 		return run_queue;
 	}
 
@@ -117,15 +122,15 @@ public class Node {
 		return processors;
 	}
 
-	public Collection<ExchangeType> getExchange_types() {
+	public Collection<ExchangeType> getExchangeTypes() {
 		return exchange_types;
 	}
 
-	public Collection<Capability> getApplications() {
+	public Collection<Capability> getCapabilities() {
 		return applications;
 	}
 
-	public Collection<AuthMechanism> getAuth_mechanisms() {
+	public Collection<AuthMechanism> getAuthMechanisms() {
 		return auth_mechanisms;
 	}
 

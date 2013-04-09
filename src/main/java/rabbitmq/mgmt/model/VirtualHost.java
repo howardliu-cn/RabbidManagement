@@ -1,5 +1,14 @@
 package rabbitmq.mgmt.model;
 
+/**
+ * Think of VHost's as "subdomains".  They are unique
+ * topologies in which configuration and security are separated
+ * from other topologies.  Exchanges cannot bind to queues or 
+ * exchanges on another Vhost.  User permissions are also unique
+ * to each vhost.
+ * 
+ * @author Richard Clayton (Berico Technologies)
+ */
 public class VirtualHost {
 
 	protected String name;

@@ -2,17 +2,43 @@ package rabbitmq.mgmt.model;
 
 import java.util.Map;
 
+/**
+ * An AMQP Exchange.
+ * 
+ * @author Richard Clayton (Berico Technologies)
+ */
 public class Exchange {
 	
 	protected String name;
-	protected String vhost;
-	protected String type;
-	protected boolean durable;
-	protected boolean auto_delete;
-	protected boolean internal;
+	protected String vhost = "/";
+	protected String type = "direct";
+	protected boolean durable = false;
+	protected boolean auto_delete = false;
+	protected boolean internal = false;;
 	protected Map<String, String> arguments;
 	
 	public Exchange(){}
+	
+	public Exchange(String name, String vhost, String type) {
+		
+		this.name = name;
+		this.vhost = vhost;
+		this.type = type;
+	}
+	
+	public Exchange(
+			String name, 
+			String vhost, 
+			String type, 
+			boolean durable,
+			boolean auto_delete) {
+		
+		this.name = name;
+		this.vhost = vhost;
+		this.type = type;
+		this.durable = durable;
+		this.auto_delete = auto_delete;
+	}
 	
 	public Exchange(String name, String vhost, String type, boolean durable,
 			boolean auto_delete, boolean internal, Map<String, String> arguments) {

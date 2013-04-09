@@ -1,5 +1,14 @@
 package rabbitmq.mgmt.model;
 
+/**
+ * Represents a type of exchange that can be used on a Broker and whether it is enabled.
+ * 
+ * By default, RabbitMQ supports 4 types of exchanges: direct, topic, headers, fanout.
+ * 
+ * You can actually install others, like a JavaScript exchange.
+ * 
+ * @author Richard Clayton (Berico Technologies)
+ */
 public class ExchangeType {
 
 	protected String name;

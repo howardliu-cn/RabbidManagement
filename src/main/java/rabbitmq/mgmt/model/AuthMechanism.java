@@ -1,5 +1,10 @@
 package rabbitmq.mgmt.model;
 
+/**
+ * An Authentication Mechanism supported by the broker and whether it is enabled.
+ * 
+ * @author Richard Clayton (Berico Technologies)
+ */
 public class AuthMechanism {
 
 	protected String name;

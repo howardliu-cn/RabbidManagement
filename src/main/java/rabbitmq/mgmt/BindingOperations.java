@@ -5,6 +5,8 @@ import static rabbitmq.Common.encodeSlashes;
 import java.util.Collection;
 
 import rabbitmq.mgmt.model.Binding;
+import rabbitmq.mgmt.model.Exchange;
+import rabbitmq.mgmt.model.Queue;
 
 
 public class BindingOperations extends BaseFluent {
@@ -44,6 +46,20 @@ public class BindingOperations extends BaseFluent {
 		HTTP.POST(url, binding);
 		
 		return this;
+	}
+	
+	public BindingOperations create(Exchange exchange, Queue queue, String routingKey){
+		
+		Binding binding = Binding.createBinding(exchange, queue, routingKey);
+		
+		return this.create(binding);
+	}
+	
+	public BindingOperations create(Exchange exchange, Exchange destExchange, String routingKey){
+		
+		Binding binding = Binding.createBinding(exchange, destExchange, routingKey);
+		
+		return this.create(binding);
 	}
 	
 	public BindingOperations delete(String vhost, String exchangeName, String queueName, String props){

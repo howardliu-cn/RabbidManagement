@@ -2,6 +2,11 @@ package rabbitmq.mgmt.model;
 
 import java.util.Arrays;
 
+/**
+ * Statistics about a Queue.
+ * 
+ * @author Richard Clayton (Berico Technologies)
+ */
 public class BackingQueueStatus {
 	
 	protected int q1;

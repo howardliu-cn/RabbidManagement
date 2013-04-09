@@ -130,6 +130,8 @@ public class HttpContext {
 	 */
 	public <T> T makeGetRequest(URI uri, GenericType<T> expectedReturnType){
 		
+		logger.info("Making get request to: {}", uri.toString());
+		
 		WebResource webResource = this.client.resource(uri);
 		
 		ClientResponse response = webResource.type(MediaType.APPLICATION_JSON).get(ClientResponse.class);

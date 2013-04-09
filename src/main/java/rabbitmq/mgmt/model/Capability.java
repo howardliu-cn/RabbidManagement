@@ -1,5 +1,10 @@
 package rabbitmq.mgmt.model;
 
+/**
+ * Describes a plugin or feature installed on the Broker.
+ * 
+ * @author Richard Clayton (Berico Technologies)
+ */
 public class Capability {
 
 	protected String name;

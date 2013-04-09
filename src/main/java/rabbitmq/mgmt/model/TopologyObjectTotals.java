@@ -1,5 +1,11 @@
 package rabbitmq.mgmt.model;
 
+/**
+ * Statistics about the total number of topology objects (exchanges, queues,
+ * consumers, connections and channels) on a RabbitMQ Cluster.
+ * 
+ * @author Richard Clayton (Berico Technologies)
+ */
 public class TopologyObjectTotals {
 
 	protected int consumers;

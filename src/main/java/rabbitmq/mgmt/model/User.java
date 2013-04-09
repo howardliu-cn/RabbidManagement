@@ -1,5 +1,14 @@
 package rabbitmq.mgmt.model;
 
+/**
+ * Represents a RabbitMQ User/Client.  
+ * 
+ * Tags = authority in RabbitMQ Management Plugin
+ * Options: "admin", "monitoring", "management";
+ * This can be multiple (string separated by commas).
+ * 
+ * @author Richard Clayton (Berico Technologies)
+ */
 public class User {
 
 	protected String name;

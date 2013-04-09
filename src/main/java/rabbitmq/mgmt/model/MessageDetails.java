@@ -1,5 +1,10 @@
 package rabbitmq.mgmt.model;
 
+/**
+ * Statistics about message transmission.
+ * 
+ * @author Richard Clayton (Berico Technologies)
+ */
 public class MessageDetails {
 	
 	protected int rate;

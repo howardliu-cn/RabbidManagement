@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rabbitmq.httpclient.BasicAuthHttpClientProvider;
+import rabbitmq.httpclient.SslWithBasicAuthHttpClientProvider;
+import rabbitmq.httpclient.SslWithBasicAuthHttpClientProvider;
 import rabbitmq.mgmt.RabbitMgmtService;
 import rabbitmq.mgmt.model.Exchange;
 import rabbitmq.mgmt.model.Queue;
@@ -17,13 +19,21 @@ public class App
 	
     public static void main( String[] args ) throws URISyntaxException
     {	
-    		BasicAuthHttpClientProvider provider = new BasicAuthHttpClientProvider("guest", "guest");
+    		//BasicAuthHttpClientProvider provider = new BasicAuthHttpClientProvider("guest", "guest");
     		
+    		SslWithBasicAuthHttpClientProvider provider = 
+    				new SslWithBasicAuthHttpClientProvider(
+    					15672, "ssl/jdoe.keycert.p12", "password123", "ssl/truststore.jks", "password", "guest", "guest");
+    	
     		RabbitMgmtService mgmt = 
-    			new RabbitMgmtService("localhost", 15672, provider).initialize();
+    			new RabbitMgmtService("rabbit3", 15672, true, provider).initialize();
+    		
+    		log("Ok.");
+    		
+    		log(mgmt.overview());
     		
     		log(mgmt.exchanges().downstreamBindings("amq.direct"));
-    		
+    		/*
     		log(mgmt.exchanges().upstreamBindings("amq.topic"));
     		
     		log(mgmt.vhosts().permissions());
@@ -64,7 +74,8 @@ public class App
     		
     		log(mgmt.vhosts().status());
     		
-    		log(mgmt.vhosts().status("test"));
+    		log(mgmt.vhosts().status("/"));
+    		*/
     }
     
     public static void log(String template, Object... args){

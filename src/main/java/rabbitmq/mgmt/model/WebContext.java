@@ -1,5 +1,13 @@
 package rabbitmq.mgmt.model;
 
+/**
+ * Information about the available Web Services on a node
+ * or cluster.  This will provide the open ports and paths for
+ * the Management Console on each node.
+ * 
+ * @author rclayton
+ *
+ */
 public class WebContext {
 
 	protected String description;
