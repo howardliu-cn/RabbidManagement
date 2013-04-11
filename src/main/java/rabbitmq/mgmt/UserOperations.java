@@ -27,6 +27,11 @@ public class UserOperations extends BaseFluent {
 		return HTTP.GET(String.format("/users/%s/permissions", user), PERMISSION_COLLECTION);
 	}
 	
+	public User get(String username){
+		
+		return HTTP.GET(String.format("/users/%s", username), USER);
+	}
+	
 	public UserOperations create(User user){
 		
 		HTTP.PUT(String.format("/users/%s", user.getName()), user);

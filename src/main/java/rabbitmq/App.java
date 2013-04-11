@@ -19,20 +19,25 @@ public class App
 	
     public static void main( String[] args ) throws URISyntaxException
     {	
-    		//BasicAuthHttpClientProvider provider = new BasicAuthHttpClientProvider("guest", "guest");
+    		BasicAuthHttpClientProvider provider = new BasicAuthHttpClientProvider("guest", "guest");
     		
-    		SslWithBasicAuthHttpClientProvider provider = 
-    				new SslWithBasicAuthHttpClientProvider(
-    					"ssl/jdoe.keycert.p12", "password123", "ssl/truststore.jks", "password", "guest", "guest");
-    	
     		RabbitMgmtService mgmt = 
-    			new RabbitMgmtService("rabbit3", 15672, true, provider).initialize();
+        			new RabbitMgmtService("localhost", 15672, false, provider).initialize();
+    		
+    		//SslWithBasicAuthHttpClientProvider provider = 
+    		//		new SslWithBasicAuthHttpClientProvider(
+    		//			"ssl/jdoe.keycert.p12", "password123", "ssl/truststore.jks", "password", "guest", "guest");
+    	
+    		//RabbitMgmtService mgmt = 
+    		//	new RabbitMgmtService("rabbit3", 15672, true, provider).initialize();
     		
     		log("Ok.");
     		
     		log(mgmt.overview());
     		
     		log(mgmt.exchanges().downstreamBindings("amq.direct"));
+    		
+    		log(mgmt.users().get("guest"));
     		/*
     		log(mgmt.exchanges().upstreamBindings("amq.topic"));
     		
