@@ -40,15 +40,20 @@ public class VirtualHostOperations extends BaseFluent {
 	
 	public Collection<Permission> permissions(){
 		
-		return HTTP.GET("/permissions", PERMISSION_COLLECTION);
+		return permissions("/");
 	}
 	
-	public Permission permissions(String user){
+	public Collection<Permission> permissions(String vhost){
 		
-		return permissions("/", user);
+		return HTTP.GET(String.format("/vhosts/%s/permissions", encodeSlashes(vhost)), PERMISSION_COLLECTION);
 	}
 	
-	public Permission permissions(String vhost, String user){
+	public Permission permissionsForUser(String user){
+		
+		return permissionsForUser("/", user);
+	}
+	
+	public Permission permissionsForUser(String vhost, String user){
 		
 		return HTTP.GET(String.format("/permissions/%s/%s", encodeSlashes(vhost), user), PERMISSION);
 	}

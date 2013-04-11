@@ -49,6 +49,8 @@ public class App
     		
     		log(mgmt.users().get("rich"));
     		
+    		log(mgmt.vhosts().permissions("test"));
+    		
     		/*
     		log(mgmt.exchanges().upstreamBindings("amq.topic"));
     		
