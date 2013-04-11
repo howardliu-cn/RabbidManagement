@@ -10,7 +10,9 @@ import rabbitmq.httpclient.SslWithBasicAuthHttpClientProvider;
 import rabbitmq.httpclient.SslWithBasicAuthHttpClientProvider;
 import rabbitmq.mgmt.RabbitMgmtService;
 import rabbitmq.mgmt.model.Exchange;
+import rabbitmq.mgmt.model.Permission;
 import rabbitmq.mgmt.model.Queue;
+import rabbitmq.mgmt.model.User;
 
 
 public class App 
@@ -38,6 +40,15 @@ public class App
     		log(mgmt.exchanges().downstreamBindings("amq.direct"));
     		
     		log(mgmt.users().get("guest"));
+    		
+    		User user = new User("rich", "administrator", "hellomom");
+    		
+    		Permission permission = new Permission("/", "rich", ".*", ".*", ".*");
+    		
+    		mgmt.users().create(user).and().permissions().set(permission);
+    		
+    		log(mgmt.users().get("rich"));
+    		
     		/*
     		log(mgmt.exchanges().upstreamBindings("amq.topic"));
     		

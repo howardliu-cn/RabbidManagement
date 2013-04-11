@@ -28,6 +28,14 @@ public class PermissionOperations extends BaseFluent {
 		return HTTP.GET(String.format("/permissions/%s/%s", encodeSlashes(vhost), user),  PERMISSION);
 	}
 	
+	public PermissionOperations set(Permission permission){
+		
+		HTTP.PUT(String.format("/permissions/%s/%s", 
+			encodeSlashes(permission.getVhost()), permission.getUser()), permission);
+		
+		return this;
+	}
+	
 	public PermissionOperations remove(String user){
 		
 		return remove(user);
