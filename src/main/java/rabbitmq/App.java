@@ -51,6 +51,8 @@ public class App
     		
     		log(mgmt.vhosts().permissions("test"));
     		
+    		log(mgmt.bindings().all());
+    		
     		/*
     		log(mgmt.exchanges().upstreamBindings("amq.topic"));
     		

@@ -163,4 +163,13 @@ public class RabbitMgmtService {
 		
 		return new NodeOperations(httpContext, this);
 	}
+	
+	/**
+	 * Get operations related to bindings.
+	 * @return Binding Operations
+	 */
+	public BindingOperations bindings(){
+		
+		return new BindingOperations(httpContext, this);
+	}
 }
