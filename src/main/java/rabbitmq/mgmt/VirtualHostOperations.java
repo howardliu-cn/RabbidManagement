@@ -4,12 +4,11 @@ import static rabbitmq.Common.encodeSlashes;
 
 import java.util.Collection;
 
-import com.sun.jersey.api.client.GenericType;
-
 import rabbitmq.mgmt.model.Permission;
-import rabbitmq.mgmt.model.Queue;
 import rabbitmq.mgmt.model.Status;
 import rabbitmq.mgmt.model.VirtualHost;
+
+import com.sun.jersey.api.client.GenericType;
 
 
 public class VirtualHostOperations extends BaseFluent {
@@ -26,6 +25,13 @@ public class VirtualHostOperations extends BaseFluent {
 	public VirtualHost get(String vhost){
 		
 		return HTTP.GET(String.format("/vhosts/%s", encodeSlashes(vhost)), VHOST);
+	}
+	
+	public VirtualHostOperations delete(String vhost){
+		
+		HTTP.DELETE(String.format("/vhosts/%s", encodeSlashes(vhost)));
+		
+		return this;
 	}
 	
 	public VirtualHostOperations create(VirtualHost vhost){
