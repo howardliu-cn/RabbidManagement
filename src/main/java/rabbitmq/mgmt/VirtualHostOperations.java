@@ -7,6 +7,7 @@ import java.util.Collection;
 import com.sun.jersey.api.client.GenericType;
 
 import rabbitmq.mgmt.model.Permission;
+import rabbitmq.mgmt.model.Queue;
 import rabbitmq.mgmt.model.Status;
 import rabbitmq.mgmt.model.VirtualHost;
 
@@ -25,6 +26,15 @@ public class VirtualHostOperations extends BaseFluent {
 	public VirtualHost get(String vhost){
 		
 		return HTTP.GET(String.format("/vhosts/%s", encodeSlashes(vhost)), VHOST);
+	}
+	
+	public VirtualHostOperations create(VirtualHost vhost){
+		
+		String url = String.format("/vhosts/%s", encodeSlashes(vhost.getName()));
+		
+		HTTP.PUT(url, vhost);
+		
+		return this;
 	}
 	
 	public Status status(){
