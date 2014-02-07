@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 
 import javax.ws.rs.core.MediaType;
 
+import com.google.common.base.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +81,7 @@ public class HttpContext {
 	 * @param returnType Expected Return type.
 	 * @return Your desired return type.
 	 */
-	public <T> T GET(String partialUrl, GenericType<T> returnType){
+	public <T> Optional<T> GET(String partialUrl, GenericType<T> returnType){
 		
 		URI uri = buildUri(partialUrl);
 		
@@ -110,6 +111,20 @@ public class HttpContext {
 		
 		makePostRequest(uri, payload);
 	}
+
+    /**
+     * Execute a POST call against the partial URL.
+     * @param partialUrl Partial URL to build.
+     * @param payload Object to POST.
+     * @param returnType Expected Return type.
+     * @return Your desired return type.
+     */
+    public <T> Optional<T> POST(String partialUrl, Object payload, GenericType<T> returnType){
+
+        URI uri = buildUri(partialUrl);
+
+        return makePostRequest(uri, payload, returnType);
+    }
 	
 	/**
 	 * Execute a DELETE call against the partial URL.
@@ -128,15 +143,15 @@ public class HttpContext {
 	 * @param expectedReturnType Type to marshall the result back to.
 	 * @return
 	 */
-	public <T> T makeGetRequest(URI uri, GenericType<T> expectedReturnType){
-		
-		logger.info("Making get request to: {}", uri.toString());
-		
+	public <T> Optional<T> makeGetRequest(URI uri, GenericType<T> expectedReturnType){
+
 		WebResource webResource = this.client.resource(uri);
 		
 		ClientResponse response = webResource.type(MediaType.APPLICATION_JSON).get(ClientResponse.class);
-		
-		return response.getEntity(expectedReturnType);
+
+        logResponse(uri, response);
+
+        return extractEntityFromResponse(response, expectedReturnType);
 	}
 	
 	/**
@@ -148,9 +163,9 @@ public class HttpContext {
 		
 		WebResource webResource = this.client.resource(uri);
 		
-		ClientResponse response = webResource.type("application/json").put(ClientResponse.class, obj);
-		
-		logger.info("Result of call: {}", response.getStatus());
+		ClientResponse response = webResource.type(MediaType.APPLICATION_JSON).put(ClientResponse.class, obj);
+
+        logResponse(uri, response);
 	}
 	
 	/**
@@ -162,11 +177,30 @@ public class HttpContext {
 		
 		WebResource webResource = this.client.resource(uri);
 		
-		ClientResponse response = webResource.type("application/json").post(ClientResponse.class, obj);
+		ClientResponse response = webResource.type(MediaType.APPLICATION_JSON).post(ClientResponse.class, obj);
 		
-		logger.info("Result of call: {}", response.getStatus());
+		logResponse(uri, response);
 	}
-	
+
+    /**
+     * Alternate form of POST allowing a return object.
+     * @param uri Raw URI to call.
+     * @param obj Object to send.
+     * @param expectedReturnType Type to marshall the result back to.
+     * @param <T>
+     * @return
+     */
+    public <T> Optional<T> makePostRequest(URI uri, Object obj, GenericType<T> expectedReturnType){
+
+        WebResource webResource = this.client.resource(uri);
+
+        ClientResponse response = webResource.type(MediaType.APPLICATION_JSON).post(ClientResponse.class, obj);
+
+        logResponse(uri, response);
+
+        return extractEntityFromResponse(response, expectedReturnType);
+    }
+
 	/**
 	 * Execute a DELETE request.
 	 * @param uri Raw URI to call.
@@ -175,8 +209,24 @@ public class HttpContext {
 		
 		WebResource webResource = this.client.resource(uri);
 		
-		ClientResponse response = webResource.type("application/json").delete(ClientResponse.class);
+		ClientResponse response = webResource.type(MediaType.APPLICATION_JSON).delete(ClientResponse.class);
 		
-		logger.info("Result of call: {}", response.getStatus());
+		logResponse(uri, response);
 	}
+
+    private <T> Optional<T> extractEntityFromResponse(ClientResponse response, GenericType<T> expectedReturnType){
+
+        if (response.hasEntity() && response.getStatus() == 200)
+            return Optional.of(response.getEntity(expectedReturnType));
+
+        return Optional.absent();
+    }
+
+    private void logResponse(URI uri, ClientResponse response){
+
+        logger.debug("{} => {}", uri.toString(), response.getStatus());
+
+        if (response.getStatus() > 300)
+            logger.warn(response.toString());
+    }
 }

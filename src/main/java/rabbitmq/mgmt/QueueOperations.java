@@ -1,14 +1,14 @@
 package rabbitmq.mgmt;
 
-import static rabbitmq.Common.encodeSlashes;
-
-import java.util.Collection;
-
+import com.google.common.base.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import rabbitmq.mgmt.model.Binding;
+import rabbitmq.mgmt.model.ConsumeOptions;
 import rabbitmq.mgmt.model.Queue;
+import rabbitmq.mgmt.model.ReceivedMessage;
+
+import java.util.Collection;
 
 
 public class QueueOperations extends BaseFluent {
@@ -25,17 +25,17 @@ public class QueueOperations extends BaseFluent {
 	 */
 	public Collection<Queue> all(){
 		
-		return HTTP.GET("/queues", QUEUE_COLLECTION);
+		return HTTP.GET("/queues", QUEUE_COLLECTION).get();
 	}
 	
 	public Collection<Queue> allOnDefault(String vhost){
 		
 		logger.debug("Getting queues at from the default vhost.");
 		
-		return allOnVHost("/");
+		return allOnVHost("/").get();
 	}
 	
-	public Collection<Queue> allOnVHost(String vhost){
+	public Optional<Collection<Queue>> allOnVHost(String vhost){
 		
 		logger.debug("Getting queues on vhost: {}.", vhost);
 		
@@ -43,12 +43,12 @@ public class QueueOperations extends BaseFluent {
 			String.format("/queues/%s", encodeSlashes(vhost)), QUEUE_COLLECTION);
 	}
 	
-	public Queue get(String queueName){
+	public Optional<Queue> get(String queueName){
 		
 		return get("/", queueName);
 	}
 	
-	public Queue get(String vhost, String queueName){
+	public Optional<Queue> get(String vhost, String queueName){
 		
 		return HTTP.GET(
 			String.format("/queues/%s/%s", encodeSlashes(vhost), queueName), QUEUE);
@@ -76,6 +76,28 @@ public class QueueOperations extends BaseFluent {
 		
 		return this;
 	}
+
+    public Optional<Collection<ReceivedMessage>> consume(String queueName){
+
+        return this.consume("/", queueName);
+    }
+
+    public Optional<Collection<ReceivedMessage>> consume(String queueName, ConsumeOptions options){
+
+        return this.consume("/", queueName, options);
+    }
+
+    public Optional<Collection<ReceivedMessage>> consume(String vhost, String queueName){
+
+        return this.consume(vhost, queueName, new ConsumeOptions());
+    }
+
+    public Optional<Collection<ReceivedMessage>> consume(String vhost, String queueName, ConsumeOptions options){
+
+        String url = String.format("/queues/%s/%s/get", encodeSlashes(vhost), queueName);
+
+        return HTTP.POST(url, options, MESSAGE_COLLECTION);
+    }
 	
 	public QueueOperations purge(String queueName){
 		
@@ -91,12 +113,12 @@ public class QueueOperations extends BaseFluent {
 		return this;
 	}
 	
-	public Collection<Binding> bindings(String queueName){
+	public Optional<Collection<Binding>> bindings(String queueName){
 		
 		return bindings("/", queueName);
 	}
 	
-	public Collection<Binding> bindings(String vhost, String queueName){
+	public Optional<Collection<Binding>> bindings(String vhost, String queueName){
 		
 		return HTTP.GET(
 			String.format("/queues/%s/%s/bindings", encodeSlashes(vhost), queueName), 

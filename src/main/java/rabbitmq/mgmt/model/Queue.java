@@ -21,7 +21,7 @@ public class Queue {
 	protected int active_consumers;
 	protected BackingQueueStatus backing_queue_status;
 	protected String name;
-	protected String vhost;
+	protected String vhost = "/";
 	protected boolean durable = false;
 	protected boolean auto_delete = false;
 	protected Map<String, String> arguments = new HashMap<String, String>();
@@ -31,7 +31,12 @@ public class Queue {
 	protected MessageDetails messages_unacknowledged_details;
 	
 	public Queue(){}
-	
+
+    public Queue(String name) {
+
+        this.name = name;
+    }
+
 	public Queue(String name, String vhost) {
 		
 		this.name = name;

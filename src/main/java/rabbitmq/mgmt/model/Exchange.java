@@ -18,7 +18,18 @@ public class Exchange {
 	protected Map<String, String> arguments;
 	
 	public Exchange(){}
-	
+
+    public Exchange(String name) {
+
+        this.name = name;
+    }
+
+    public Exchange(String name, String type) {
+
+        this.name = name;
+        this.type = type;
+    }
+
 	public Exchange(String name, String vhost, String type) {
 		
 		this.name = name;
@@ -26,12 +37,7 @@ public class Exchange {
 		this.type = type;
 	}
 	
-	public Exchange(
-			String name, 
-			String vhost, 
-			String type, 
-			boolean durable,
-			boolean auto_delete) {
+	public Exchange(String name, String vhost, String type, boolean durable, boolean auto_delete) {
 		
 		this.name = name;
 		this.vhost = vhost;

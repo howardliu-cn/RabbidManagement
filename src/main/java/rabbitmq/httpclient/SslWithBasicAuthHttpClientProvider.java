@@ -78,7 +78,7 @@ public class SslWithBasicAuthHttpClientProvider implements HttpClientProvider {
 		// Create client configuration object.
 		ClientConfig clientConf = new DefaultClientConfig();
 		
-		// Add the Message Body Handler for deserializing JSON.
+		// Add the ReceivedMessage Body Handler for deserializing JSON.
 		clientConf.getClasses().add(GsonMessageBodyHandler.class);
 		
 		try {

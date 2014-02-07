@@ -1,12 +1,8 @@
 package rabbitmq.httpclient;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
+import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -15,8 +11,9 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
-
-import com.google.gson.Gson;
+import java.io.*;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 
 /**
  * Encapsulates GSON support for custom serializing/deserializing objects.
@@ -24,6 +21,8 @@ import com.google.gson.Gson;
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
 public final class GsonMessageBodyHandler implements MessageBodyWriter<Object>, MessageBodyReader<Object> {
+
+    private static final Logger logger = LoggerFactory.getLogger(GsonMessageBodyHandler.class);
 
     private static final String CHARSET = "UTF-8";
 
@@ -71,6 +70,10 @@ public final class GsonMessageBodyHandler implements MessageBodyWriter<Object>, 
         	
             Type jsonType = getAppropriateType(type, genericType);
 
+            String json = getGson().toJson(object, jsonType);
+
+            logger.trace("Outgoing JSON Entity: {}", json);
+
             getGson().toJson(object, jsonType, outputStreamWriter);
             
         } finally {
@@ -93,8 +96,12 @@ public final class GsonMessageBodyHandler implements MessageBodyWriter<Object>, 
 			inputStreamReader = new InputStreamReader(inputStream, CHARSET);
 			
 			Type jsonType = getAppropriateType(type, genericType);
-		
-			result = getGson().fromJson(inputStreamReader, jsonType);
+
+            String json = getStringFromInputStream(inputStream);
+
+            logger.trace("Incoming JSON Entity: {}", json);
+
+			result = getGson().fromJson(json, jsonType);
 		
 		} finally {
 		
@@ -109,5 +116,33 @@ public final class GsonMessageBodyHandler implements MessageBodyWriter<Object>, 
 		
 		return (type.equals(genericType))? type : genericType;
 	}
-	
+
+    private static String getStringFromInputStream(InputStream is) {
+
+        BufferedReader br = null;
+        StringBuilder sb = new StringBuilder();
+
+        String line;
+        try {
+
+            br = new BufferedReader(new InputStreamReader(is));
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return sb.toString();
+    }
+
 }

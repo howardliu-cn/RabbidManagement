@@ -1,12 +1,11 @@
 package rabbitmq.mgmt;
 
-import static rabbitmq.Common.encodeSlashes;
-
-import java.util.Collection;
-
+import com.google.common.base.Optional;
 import rabbitmq.mgmt.model.Binding;
 import rabbitmq.mgmt.model.Exchange;
 import rabbitmq.mgmt.model.Queue;
+
+import java.util.Collection;
 
 
 public class BindingOperations extends BaseFluent {
@@ -16,23 +15,23 @@ public class BindingOperations extends BaseFluent {
 		super(httpContext, mgmtService);
 	}
 
-	public Collection<Binding> all(){
+	public Optional<Collection<Binding>> all(){
 		
 		return HTTP.GET("/bindings", BINDING_COLLECTION);
 	}
 	
-	public Collection<Binding> all(String vhost){
+	public Optional<Collection<Binding>> all(String vhost){
 		
 		return HTTP.GET(String.format("/bindings/%s", encodeSlashes(vhost)), BINDING_COLLECTION);
 	}
 	
-	public Collection<Binding> get(String vhost, String exchangeName, String queueName){
+	public Optional<Collection<Binding>> get(String vhost, String exchangeName, String queueName){
 		
 		return HTTP.GET(
 			String.format("/bindings/%s/e/%s/q/%s", encodeSlashes(vhost), exchangeName, queueName), BINDING_COLLECTION);
 	}
 	
-	public Binding get(String vhost, String exchangeName, String queueName, String props){
+	public Optional<Binding> get(String vhost, String exchangeName, String queueName, String props){
 		
 		return HTTP.GET(
 			String.format("/bindings/%s/e/%s/q/%s/%s", encodeSlashes(vhost), exchangeName, queueName, props), BINDING);

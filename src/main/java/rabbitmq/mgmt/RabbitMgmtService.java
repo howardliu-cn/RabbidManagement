@@ -3,7 +3,9 @@ package rabbitmq.mgmt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import rabbitmq.httpclient.BasicAuthHttpClientProvider;
 import rabbitmq.httpclient.HttpClientProvider;
+import rabbitmq.httpclient.SslWithBasicAuthHttpClientProvider;
 import rabbitmq.mgmt.model.Overview;
 
 import com.sun.jersey.api.client.Client;
@@ -106,7 +108,7 @@ public class RabbitMgmtService {
 	 */
 	public Overview overview(){
 		
-		return this.httpContext.GET("/overview", new GenericType<Overview>(){});
+		return this.httpContext.GET("/overview", new GenericType<Overview>(){}).get();
 	}
 	
 	/**
@@ -172,4 +174,69 @@ public class RabbitMgmtService {
 		
 		return new BindingOperations(httpContext, this);
 	}
+
+    /**
+     * Get a builder for the RabbitMgmtService, which can be a little tedious to configure via constructor.
+     * @return Builder instance.
+     */
+    public static Builder builder(){ return new Builder(); }
+
+    /**
+     * Makes RabbitMgmtService construction easier.
+     */
+    public static class Builder {
+
+        private String host = "localhost";
+
+        private int port = 15672;
+
+        private boolean useSsl = false;
+
+        private HttpClientProvider provider = new BasicAuthHttpClientProvider("guest", "guest");
+
+        public Builder host(String host){
+
+            this.host = host;
+
+            return this;
+        }
+
+        public Builder port(int port){
+
+            this.port = port;
+
+            return this;
+        }
+
+        public Builder sslEnabled(){
+
+            this.useSsl = true;
+
+            return this;
+        }
+
+        public Builder credentials(String username, String password){
+
+            this.provider = new BasicAuthHttpClientProvider(username, password);
+
+            return this;
+        }
+
+        public Builder credentials(String key, String keyPass, String trust, String username, String password){
+
+            return credentials(key, keyPass, trust, null, username, password);
+        }
+
+        public Builder credentials(String key, String keyPass, String trust, String trustPass, String username, String password){
+
+            this.provider = new SslWithBasicAuthHttpClientProvider(key, keyPass, trust, trustPass, username, password);
+
+            return this;
+        }
+
+        public RabbitMgmtService build(){
+
+            return new RabbitMgmtService(host, port, useSsl, provider).initialize();
+        }
+    }
 }

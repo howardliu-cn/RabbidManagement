@@ -1,9 +1,10 @@
 package rabbitmq.mgmt;
 
-import java.util.Collection;
-
+import com.google.common.base.Optional;
 import rabbitmq.mgmt.model.Permission;
 import rabbitmq.mgmt.model.User;
+
+import java.util.Collection;
 
 
 public class UserOperations extends BaseFluent {
@@ -14,20 +15,20 @@ public class UserOperations extends BaseFluent {
 	
 	public Collection<User> all(){
 		
-		return HTTP.GET("/users", USER_COLLECTION);
+		return HTTP.GET("/users", USER_COLLECTION).get();
 	}
 	
 	public User whoAmI(){
 		
-		return HTTP.GET("/whoami", USER);
+		return HTTP.GET("/whoami", USER).get();
 	}
 	
-	public Collection<Permission> permissionsFor(String user){
+	public Optional<Collection<Permission>> permissionsFor(String user){
 		
 		return HTTP.GET(String.format("/users/%s/permissions", user), PERMISSION_COLLECTION);
 	}
 	
-	public User get(String username){
+	public Optional<User> get(String username){
 		
 		return HTTP.GET(String.format("/users/%s", username), USER);
 	}

@@ -3,3 +3,7 @@ target/
 .classpath
 .settings/
 ssl/
+*.iml
+*.ipr
+*.iws
+.idea

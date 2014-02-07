@@ -10,15 +10,30 @@ import java.util.Map;
 public class Binding {
 	
 	protected String source;
-	protected String vhost;
+	protected String vhost = "/";
 	protected String destination;
-	protected String destination_type;
+	protected String destination_type = "queue";
 	protected String routing_key;
 	protected String properties_key;
 	protected Map<String, String> arguments;
 	
 	public Binding(){}
-	
+
+    public Binding(String source, String destination, String routing_key){
+
+        this.source = source;
+        this.destination = destination;
+        this.routing_key = routing_key;
+    }
+
+    public Binding(String vhost, String source, String destination, String routing_key){
+
+        this.source = source;
+        this.destination = destination;
+        this.routing_key = routing_key;
+        this.vhost = vhost;
+    }
+
 	public Binding(
 			String vhost, String source, String destination,
 			String destination_type, String routing_key) {

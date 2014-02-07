@@ -1,10 +1,9 @@
 package rabbitmq.mgmt;
 
-import static rabbitmq.Common.encodeSlashes;
+import com.google.common.base.Optional;
+import rabbitmq.mgmt.model.Permission;
 
 import java.util.Collection;
-
-import rabbitmq.mgmt.model.Permission;
 
 
 public class PermissionOperations extends BaseFluent {
@@ -15,15 +14,15 @@ public class PermissionOperations extends BaseFluent {
 
 	public Collection<Permission> all(){
 		
-		return HTTP.GET("/permissions", PERMISSION_COLLECTION);
+		return HTTP.GET("/permissions", PERMISSION_COLLECTION).get();
 	}
 	
-	public Permission get(String user){
+	public Optional<Permission> get(String user){
 		
 		return get("/", user);
 	}
 	
-	public Permission get(String vhost, String user){
+	public Optional<Permission> get(String vhost, String user){
 		
 		return HTTP.GET(String.format("/permissions/%s/%s", encodeSlashes(vhost), user),  PERMISSION);
 	}
