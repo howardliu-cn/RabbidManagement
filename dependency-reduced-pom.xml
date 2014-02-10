@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>rabbitmq</groupId>
+  <artifactId>mgmt</artifactId>
+  <name>RabbitMQ Management</name>
+  <version>3.4.0</version>
+  <url>http://github.com/Berico-Technologies/RabbitMQ-Management-Java</url>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>2.2</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer>
+                  <manifestEntries>
+                    <Main-Class>rabbitmq.loader.ManifestLoader</Main-Class>
+                  </manifestEntries>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <repositories>
+    <repository>
+      <releases />
+      <snapshots />
+      <id>nexus.bericotechnologies.com</id>
+      <name>Berico Technologies Nexus</name>
+      <url>http://nexus.bericotechnologies.com/content/groups/public</url>
+    </repository>
+  </repositories>
+  <dependencies>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.0.10</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.9.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.berico</groupId>
+      <artifactId>test-utils</artifactId>
+      <version>1.0.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>xstream</groupId>
+      <artifactId>xstream</artifactId>
+      <version>1.2.2</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+  <distributionManagement>
+    <repository>
+      <id>nexus.bericotechnologies.com</id>
+      <name>Berico Technologies Nexus</name>
+      <url>http://nexus.bericotechnologies.com/content/repositories/releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>nexus.bericotechnologies.com</id>
+      <name>Berico Technologies Nexus</name>
+      <url>http://nexus.bericotechnologies.com/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+</project>
+

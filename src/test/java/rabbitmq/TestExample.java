@@ -14,6 +14,7 @@ import static rabbitmq.test.BindingMatchers.*;
 /**
  * @author Richard Clayton (Berico Technologies)
  */
+@Ignore("Just an example.")
 public class TestExample {
 
     static RabbitMgmtService mgmt;
@@ -23,7 +24,7 @@ public class TestExample {
     @BeforeClass
     public static void setup(){
 
-        mgmt = RabbitMgmtService.builder().host("rabbit.archnet.mil").build();
+        mgmt = RabbitMgmtService.builder().build();
 
         rabbitAssert = new RabbitAssert(mgmt);
 
