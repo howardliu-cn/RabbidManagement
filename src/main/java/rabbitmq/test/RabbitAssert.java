@@ -253,7 +253,7 @@ public class RabbitAssert {
 
     public RabbitAssert hasBinding(String vhost, String exchange, String queue, BindingMatcher... matchers) {
 
-        Optional<Collection<Binding>> bindings = mgmt.bindings().get(vhost, exchange, queue);
+        Optional<Collection<Binding>> bindings = mgmt.bindings().getEtoQ(vhost, exchange, queue);
 
         assertTrue(bindings.isPresent());
         assertTrue(bindings.get().size() > 0);
@@ -270,7 +270,7 @@ public class RabbitAssert {
 
     public RabbitAssert doesNotHaveBinding(String vhost, String exchange, String queue, BindingMatcher... matchers) {
 
-        Optional<Collection<Binding>> bindings = mgmt.bindings().get(vhost, exchange, queue);
+        Optional<Collection<Binding>> bindings = mgmt.bindings().getEtoQ(vhost, exchange, queue);
 
         if (bindings.isPresent() && bindings.get().size() > 0)
             if (matchers != null && matchers.length > 0) assertFalse(hasMatch(bindings.get(), matchers));

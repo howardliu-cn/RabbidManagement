@@ -18,7 +18,7 @@ public class BasicExample {
 
     public static void main(String[] args) throws URISyntaxException {
 
-        String hostname = Optional.of(args[0]).or("localhost");
+        String hostname = (args != null && args.length > 0)? args[0] : "localhost";
 
         BasicAuthHttpClientProvider provider = new BasicAuthHttpClientProvider("guest", "guest");
 
@@ -27,6 +27,7 @@ public class BasicExample {
          */
         RabbitMgmtService mgmt = RabbitMgmtService.builder().build();
 
+        /* Or you can override defaults by using the builder. */
         mgmt = RabbitMgmtService.builder().host(hostname).port(15672).credentials("guest", "guest").build();
 
         /*
@@ -79,7 +80,7 @@ public class BasicExample {
             .bindings()
                 .create(new Binding("ex1", "q1", "topic1"));
 
-        mgmt.exchanges().publish("ex1", new Message().setPayload("Hello!").setRoutingKey("topic1"));
+        mgmt.exchanges().publish("ex1", Message.builder().routingKey("topic1").payload("Hello!").build());
 
         Optional<Collection<ReceivedMessage>> messages =
                 mgmt.queues().consume("q1", ConsumeOptions.builder().requeueMessage(false).build());

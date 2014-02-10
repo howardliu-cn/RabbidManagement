@@ -91,5 +91,54 @@ public class Message {
         return (Map<String, Object>)this.properties.get("headers");
     }
 
+    public static Builder builder(){ return new Builder(); }
 
+    public static class Builder {
+
+        Message message = new Message();
+
+        public Builder routingKey(String key){
+
+            message.setRoutingKey(key);
+
+            return this;
+        }
+
+        public Builder header(String key, Object value){
+
+            message.setHeader(key, value);
+
+            return this;
+        }
+
+        public Builder property(String key, Object value){
+
+            message.setProperty(key, value);
+
+            return this;
+        }
+
+        public Builder payload(String payload){
+
+            message.setPayload(payload);
+
+            return this;
+        }
+
+        public Builder payload(byte[] payload){
+
+            message.setPayloadBytes(payload);
+
+            return this;
+        }
+
+        public Builder entity(Object entity){
+
+            message.setPayloadEntity(entity);
+
+            return this;
+        }
+
+        public Message build(){ return message; }
+    }
 }

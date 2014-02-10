@@ -15,7 +15,7 @@ public class Exchange {
 	protected boolean durable = false;
 	protected boolean auto_delete = false;
 	protected boolean internal = false;;
-	protected Map<String, String> arguments;
+	protected Map<String, Object> arguments;
 	
 	public Exchange(){}
 
@@ -47,7 +47,7 @@ public class Exchange {
 	}
 	
 	public Exchange(String name, String vhost, String type, boolean durable,
-			boolean auto_delete, boolean internal, Map<String, String> arguments) {
+			boolean auto_delete, boolean internal, Map<String, Object> arguments) {
 		
 		this.name = name;
 		this.vhost = vhost;
@@ -106,11 +106,11 @@ public class Exchange {
 		this.internal = internal;
 	}
 	
-	public Map<String, String> getArguments() {
+	public Map<String, Object> getArguments() {
 		return arguments;
 	}
 	
-	public void setArguments(Map<String, String> arguments) {
+	public void setArguments(Map<String, Object> arguments) {
 		this.arguments = arguments;
 	}
 	
@@ -120,5 +120,104 @@ public class Exchange {
 				+ ", durable=" + durable + ", auto_delete=" + auto_delete
 				+ ", internal=" + internal + ", arguments=" + arguments + "]";
 	}
-	
+
+    public static Builder builder(){ return new Builder(); }
+
+    public static class Builder {
+
+        Exchange exchange = new Exchange();
+
+        public Builder name(String exchangeName){
+
+            exchange.setName(exchangeName);
+
+            return this;
+        }
+
+        public Builder vhost(String vhost){
+
+            exchange.setVhost(vhost);
+
+            return this;
+        }
+
+        public Builder direct(){
+
+            return type("direct");
+        }
+
+        public Builder fanout(){
+
+            return type("fanout");
+        }
+
+        public Builder topic(){
+
+            return type("topic");
+        }
+
+        public Builder headers(){
+
+            return type("headers");
+        }
+
+        public Builder type(String exchangeType){
+
+            exchange.setType(exchangeType);
+
+            return this;
+        }
+
+        public Builder durable(boolean trueIfDurable){
+
+            exchange.setDurable(trueIfDurable);
+
+            return this;
+        }
+
+        public Builder durable(){
+
+            return durable(true);
+        }
+
+        public Builder autoDelete(boolean trueIfAutoDelete){
+
+            exchange.setAutoDelete(trueIfAutoDelete);
+
+            return this;
+        }
+
+        public Builder autoDelete(){
+
+            return autoDelete(true);
+        }
+
+        public Builder internal(boolean trueIfInternal){
+
+            exchange.setInternal(trueIfInternal);
+
+            return this;
+        }
+
+        public Builder internal(){
+
+            return internal(true);
+        }
+
+        public Builder arg(String key, Object value){
+
+            exchange.getArguments().put(key, value);
+
+            return this;
+        }
+
+        public Builder arguments(Map<String, Object> arguments){
+
+            exchange.getArguments().putAll(arguments);
+
+            return this;
+        }
+
+        public Exchange build(){ return exchange; }
+    }
 }

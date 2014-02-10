@@ -1,12 +1,21 @@
-RabbitMQ-Management-Java
+Rabbid Management
 ========================
 
-Java bindings for the RabbitMQ Management REST API.  The implementation uses the Jersey REST Client under the hood due to some bizarre issues encountered using Apache HttpComponents (via Spring RestTemplate).  It currently supports Basic Auth, but should have SSL Auth in the next day or so.
+Formerly known as RabbitMQ-Management-Java.  This is a utility library for managing and testing the state of a RabbitMQ node/cluster via the RabbitMQ Management Console.  In many cases, it's simply a fluent Java API for the console.  The library also includes a built-in Assertion library for writing integration tests against RabbitMQ, as well as, loader and persistence mechanism for topology configuration.
 
+The library was developed in support of our AMPere project (http://github.com/Berico-Technologies/AMP), but maintains no ties to the project so it can be used independently by other developers or frameworks.
+
+> This library is licensed under the Apache License, Version 2.0.
 
 ## Changelog
 
 > Note about versions.  This library was originally keeping in sync with the AMPere project (so it started it's life at 3.1.0.  I'm going to break with tradition an let it version as needed.  Sorry for any confusion.
+
+**v3.4.0**
+
+- Support for Loading and Persisting topology manifests.  In essence, you can save exchanges, queues, etc. from one source and have them loaded into another RabbitMQ instance.  The manifest can be saved as XML, JSON, or YAML.
+- Cleaned up model.  There are now parameterized constructors, setters, and builders for the model classes you would instantiate.
+- Fixed a bug in which all bindings were executed as Exchange to Queue (Ex to Ex was not working).
 
 **v3.3.0**
 
@@ -25,53 +34,121 @@ Java bindings for the RabbitMQ Management REST API.  The implementation uses the
 
 - Initial release including support for most of the RabbitMQ Management Console functions.
 
+**Installation/Configuration**
 
-## Examples
+You can access the library via Maven:
+
+```
+<repository>
+    <id>nexus.bericotechnologies.com</id>
+    <name>Berico Technologies Nexus</name>
+    <url>http://nexus.bericotechnologies.com/content/groups/public</url>
+</repository>
+
+<dependency>
+    <groupId>rabbitmq</groupId>
+	<artifactId>mgmt</artifactId>
+	<version>3.4.0</version>
+</dependency>
+```
+
+> I will place it on Maven Central the second the project goes about 25 stars.
+
+##Running##
+
+You can either use the API and progamatically interact with RabbitMQ, or you can edit a manifest file (XML, JSON, and YAML versions included in the `manifests` directory) and load/rollback the topology objects using the `ManifestLoader`:
+
+```bash
+# In the root directory of the project.
+chmod +x load
+# This command uses Maven.  I'll supply a better script in future versions that uses a FatJar.
+./load --help
+# Load from the specified manifest file
+./load manifests/manifest.xml
+# Remove all objects defined in the manifest file
+./load manifests/manifest.xml --rollback
+```
+
+
+### Examples
 
 There's basic command and control functionality that maps directly to the RabbitMQ Management Console.
 
+Instantiating the Management Service:
 ```java
-RabbitMgmtService mgmt = RabbitMgmtService.builder().host(hostname).port(15672).credentials("guest", "guest").build();
+RabbitMgmtService mgmt =
+  RabbitMgmtService.builder()
+    .host(hostname)
+    .port(15672)
+    .credentials("guest", "guest")
+    .build();
+```
 
+Working with Exchanges:
+```java
+// Retrieving all exchanges on the default vhost ("/")
 Collection<Exchange> exchanges =  mgmt.exchanges().all();
 
-Exchange ex = new Exchange();
+
+// Creating exchanges:
+// 1.  Instantiate/configure an exchange
+// 2.  Use the manager to create the exchange.
+
+// Note: Most objects (at least the ones you would instantiate)
+// have overloaded constructors, setters, and companion builders.
+// Use the pattern most compatible with your development style.
+Exchange ex = new Exchange("berico.tech");
+
+// OR
+ex = new Exchange();
 ex.setName("berico.tech");
 ex.setType("direct");
 ex.setAutoDelete(false);
 ex.setDurable(true);
 ex.setInternal(false);
 ex.setVhost("/");
-    		
+
+// OR
+ex = Exchange.builder().name("berico.tech").direct().build();
+
+// Create the exchange
 mgmt.exchanges().create(ex);
-    		
+
+// Get the exchange from the server
 Optional<Exchange> exBackFromServer = mgmt.exchanges().get("berico.tech");
+
+// Get bindings from the server:
 
 // Downstream = Exchange -> Exchange or Exchange -> Queue
 Optional<Collection<Binding>> amqDirectBindings = mgmt.exchanges().downstreamBindings("amq.direct");
 
 // Upstream = Exchange <- Exchange
 Optional<Collection<Binding>> exchangeToExchangeBindgings = mgmt.exchanges().upstreamBindings("amq.topic");
-    		
-Collection<Permission> permissionsForDefaultVhost = mgmt.vhosts().permissions();
-    		
-Collection<User> users = mgmt.users().all();
-    		
-Optional<Collection<Permission>> permissionsForGuest = mgmt.users().permissionsFor("guest");
-    		
-User me = mgmt.users().whoAmI();
-    		
-Optional<Permission> permissionForGuestOnDefaultVhost = mgmt.permissions().get("/", "guest");
-    		
+
+// Delete an exchange
+mgmt.exchanges().delete(ex.getName());
+```
+Working with Queues:
+```java
 Queue q = new Queue();
 q.setName("test-queue");
 q.setDurable(true);
 q.setAutoDelete(false);
 q.setVhost("/");
-    		
-// All of the mutation methods are fluent:
-mgmt.queues().create(q).get("test-queue");
 
+// OR
+// Note that "autoDelete" and "vhost" are redundant (these are default values).
+q = Queue.builder().name("test-queue").durable().autoDelete(false).vhost("/").build();
+
+// All of the mutation methods are fluent.  Here we create a queue and retrieve that queue from the server.
+Queue testQueue = mgmt.queues().create(q).get("test-queue");
+
+// Delete a Queue
+mgmt.queues().delete("test-queue");
+```
+
+Working with Bindings:
+```java
 Binding b = new Binding();
 b.setSource(ex.getName());
 b.setDestination(q.getName());
@@ -79,7 +156,17 @@ b.setDestinationType("queue");
 b.setRoutingKey("some.generic.key");
 b.setVhost("/");
 
+// OR
+// "vhost" is redundant and "setExchangeType" is not necessary ("toQueue" sets the correct type).
+b = Binding.builder()
+  .fromExchange(ex.getName())
+  .toQueue(q.getName())
+  .routingKey("some.generic.key")
+  .vhost("/")
+  .build();
+
 // Bind the previous exchange to the queue with the binding above.
+// This example demonstrates "and()" which allows you to traverse back to the base fluent interface.
 mgmt.exchanges()
       .create(ex)
     .and()
@@ -88,6 +175,30 @@ mgmt.exchanges()
     .and()
     .bindings()
       .create(b);
+```
+
+Manage Users and Permissions:
+```java
+// Get all users on the default vhost.
+Collection<User> users = mgmt.users().all();
+
+// Get the authenticated user account interacting with the console.
+User me = mgmt.users().whoAmI();
+
+// Create a user
+mgmt.users().create(User.builder().name("bob").password("abc123").build());
+
+// Remove a user
+mgmt.users().delete("bob");
+
+// Get permissions on the default vhost
+Collection<Permission> allPermissions = mgmt.vhosts().permissions();
+
+// Or get permissions for a particular user (regardless of vhost).
+Optional<Collection<Permission>> permissionsForGuest = mgmt.users().permissionsFor("guest");
+    		
+// Or scope permissions by user and vhost.
+Optional<Permission> permissionForGuestOnDefaultVhost = mgmt.permissions().get("/", "guest");
 ```
 
 You can now even publish and consume test messages with the API now:
@@ -102,12 +213,12 @@ mgmt.queues()
     .bindings()
         .create(new Binding("ex1", "q1", "topic1"));
 
-mgmt.exchanges().publish("ex1", new Message().setPayload("Hello!").setRoutingKey("topic1"));
+mgmt.exchanges().publish("ex1",
+  Message.builder().payload("Hello!").routingKey("topic1").build());
 
 Optional<Collection<ReceivedMessage>> messages =
-        mgmt.queues().consume("q1", ConsumeOptions.builder().requeueMessage(false).build());
+  mgmt.queues().consume("q1", ConsumeOptions.builder().requeueMessage(false).build());
 ```
-
 
 I've also added some helper functionality for testing the state of a RabbitMQ cluster which you can integrate into your integration-tests:
 

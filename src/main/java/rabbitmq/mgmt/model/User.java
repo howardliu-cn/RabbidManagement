@@ -1,5 +1,7 @@
 package rabbitmq.mgmt.model;
 
+import com.google.common.base.Joiner;
+
 /**
  * Represents a RabbitMQ User/Client.  
  * 
@@ -14,6 +16,7 @@ public class User {
 	protected String name;
 	protected String tags;
 	protected String password;
+    @ProducedByRabbit
 	protected String password_hash;
 	
 	public User(){}
@@ -62,4 +65,34 @@ public class User {
 		return "User [name=" + name + ", tags=" + tags + ", password="
 				+ password + ", password_hash=" + password_hash + "]";
 	}
+
+    public static Builder builder(){ return new Builder(); }
+
+    public static class Builder {
+
+        User user = new User();
+
+        public Builder name(String username){
+
+            user.setName(username);
+
+            return this;
+        }
+
+        public Builder tags(String... tags){
+
+            user.setTags(Joiner.on(",").join(tags));
+
+            return this;
+        }
+
+        public Builder password(String password){
+
+            user.setPassword(password);
+
+            return this;
+        }
+
+        public User build(){ return user; }
+    }
 }

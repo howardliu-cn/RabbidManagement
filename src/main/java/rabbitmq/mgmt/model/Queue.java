@@ -10,25 +10,40 @@ import java.util.Map;
  */
 public class Queue {
 
-	protected long memory;
-	protected String idle_since;
-	protected String policy;
-	protected String exclusive_consumer_tag;
-	protected long messages_ready;
-	protected long messages_unacknowledged;
-	protected long messages;
-	protected int consumers;
-	protected int active_consumers;
-	protected BackingQueueStatus backing_queue_status;
+    @ProducedByRabbit
+	protected transient long memory;
+    @ProducedByRabbit
+	protected transient String idle_since;
+    @ProducedByRabbit
+	protected transient String policy;
+    @ProducedByRabbit
+	protected transient String exclusive_consumer_tag;
+    @ProducedByRabbit
+	protected transient long messages_ready;
+    @ProducedByRabbit
+	protected transient long messages_unacknowledged;
+    @ProducedByRabbit
+	protected transient long messages;
+    @ProducedByRabbit
+	protected transient int consumers;
+    @ProducedByRabbit
+	protected transient int active_consumers;
+    @ProducedByRabbit
+	protected transient BackingQueueStatus backing_queue_status;
+    @ProducedByRabbit
+    protected transient String node;
+    @ProducedByRabbit
+    protected transient MessageDetails messages_details;
+    @ProducedByRabbit
+    protected transient MessageDetails messages_ready_details;
+    @ProducedByRabbit
+    protected transient MessageDetails messages_unacknowledged_details;
+
 	protected String name;
 	protected String vhost = "/";
 	protected boolean durable = false;
 	protected boolean auto_delete = false;
-	protected Map<String, String> arguments = new HashMap<String, String>();
-	protected String node;
-	protected MessageDetails messages_details;
-	protected MessageDetails messages_ready_details;
-	protected MessageDetails messages_unacknowledged_details;
+	protected Map<String, Object> arguments = new HashMap<String, Object>();
 	
 	public Queue(){}
 
@@ -52,7 +67,7 @@ public class Queue {
 	}
 	
 	public Queue(String name, String vhost, boolean durable,
-			boolean auto_delete, Map<String, String> arguments) {
+			boolean auto_delete, Map<String, Object> arguments) {
 		this.name = name;
 		this.vhost = vhost;
 		this.durable = durable;
@@ -60,10 +75,12 @@ public class Queue {
 		this.arguments = arguments;
 	}
 
+    @ProducedByRabbit
 	public long getMemory() {
 		return memory;
 	}
-	
+
+    @ProducedByRabbit
 	public String getIdleSince() {
 		return idle_since;
 	}
@@ -75,32 +92,39 @@ public class Queue {
 	public void setPolicy(String policy) {
 		this.policy = policy;
 	}
-	
+
+    @ProducedByRabbit
 	public String getExclusiveConsumerTag() {
 		return exclusive_consumer_tag;
 	}
-	
+
+    @ProducedByRabbit
 	public long getMessagesReady() {
 		return messages_ready;
 	}
-	
+
+    @ProducedByRabbit
 	public long getMessagesUnacknowledged() {
 		return messages_unacknowledged;
 	}
-	
+
+    @ProducedByRabbit
 	public long getMessages() {
 		return messages;
 	}
-	
+
+    @ProducedByRabbit
 	public int getConsumers() {
 		return consumers;
 	}
-	
+
+    @ProducedByRabbit
 	public int getActiveConsumers() {
 		return active_consumers;
 	}
-	
-	public BackingQueueStatus getBackingQueueStatus() {
+
+    @ProducedByRabbit
+    public BackingQueueStatus getBackingQueueStatus() {
 		return backing_queue_status;
 	}
 
@@ -136,26 +160,30 @@ public class Queue {
 		this.auto_delete = autoDelete;
 	}
 	
-	public Map<String, String> getArguments() {
+	public Map<String, Object> getArguments() {
 		return arguments;
 	}
 	
-	public void setArguments(Map<String, String> arguments) {
+	public void setArguments(Map<String, Object> arguments) {
 		this.arguments = arguments;
 	}
-	
+
+    @ProducedByRabbit
 	public String getNode() {
 		return node;
 	}
 
+    @ProducedByRabbit
 	public MessageDetails getMessagesDetails() {
 		return messages_details;
 	}
 
+    @ProducedByRabbit
 	public MessageDetails getMessagesReadyDetails() {
 		return messages_ready_details;
 	}
 
+    @ProducedByRabbit
 	public MessageDetails getMessagesUnacknowledgedDetails() {
 		return messages_unacknowledged_details;
 	}
@@ -176,5 +204,66 @@ public class Queue {
 				+ ", messages_unacknowledged_details="
 				+ messages_unacknowledged_details + "]";
 	}
-	
+
+    public static Builder builder(){ return new Builder(); }
+
+
+    public static class Builder {
+
+        Queue queue = new Queue();
+
+        public Builder name(String queueName){
+
+            queue.setName(queueName);
+
+            return this;
+        }
+
+        public Builder vhost(String vhost){
+
+            queue.setVhost(vhost);
+
+            return this;
+        }
+
+        public Builder durable(boolean trueIfDurable){
+
+            queue.setDurable(trueIfDurable);
+
+            return this;
+        }
+
+        public Builder durable(){
+
+            return durable(true);
+        }
+
+        public Builder autoDelete(boolean trueIfAutoDelete){
+
+            queue.setAutoDelete(trueIfAutoDelete);
+
+            return this;
+        }
+
+        public Builder autoDelete(){
+
+            return autoDelete(true);
+        }
+
+        public Builder arg(String key, Object value){
+
+            queue.getArguments().put(key, value);
+
+            return this;
+        }
+
+        public Builder arguments(Map<String, Object> arguments){
+
+            queue.getArguments().putAll(arguments);
+
+            return this;
+        }
+
+        public Queue build(){ return queue; }
+    }
 }

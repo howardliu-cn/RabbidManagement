@@ -107,7 +107,9 @@ public class RabbitMgmtService {
 	 * @return Overview of the node with stats about usage.
 	 */
 	public Overview overview(){
-		
+
+        checkInitialize();
+
 		return this.httpContext.GET("/overview", new GenericType<Overview>(){}).get();
 	}
 	
@@ -116,8 +118,10 @@ public class RabbitMgmtService {
 	 * @return Exchange Operations
 	 */
 	public ExchangeOperations exchanges(){
-		
-		return new ExchangeOperations(httpContext, this);
+
+        checkInitialize();
+
+        return new ExchangeOperations(httpContext, this);
 	}
 	
 	/**
@@ -125,8 +129,10 @@ public class RabbitMgmtService {
 	 * @return Queue Operations
 	 */
 	public QueueOperations queues(){
-		
-		return new QueueOperations(httpContext, this);
+
+        checkInitialize();
+
+        return new QueueOperations(httpContext, this);
 	}
 	
 	/**
@@ -134,8 +140,10 @@ public class RabbitMgmtService {
 	 * @return VHost Operations
 	 */
 	public VirtualHostOperations vhosts(){
-		
-		return new VirtualHostOperations(httpContext, this);
+
+        checkInitialize();
+
+        return new VirtualHostOperations(httpContext, this);
 	}
 	
 	
@@ -144,8 +152,10 @@ public class RabbitMgmtService {
 	 * @return User Operations
 	 */
 	public UserOperations users(){
-		
-		return new UserOperations(httpContext, this);
+
+        checkInitialize();
+
+        return new UserOperations(httpContext, this);
 	}
 	
 	/**
@@ -153,8 +163,10 @@ public class RabbitMgmtService {
 	 * @return Permission Operations
 	 */
 	public PermissionOperations permissions(){
-		
-		return new PermissionOperations(httpContext, this);
+
+        checkInitialize();
+
+        return new PermissionOperations(httpContext, this);
 	}
 	
 	/**
@@ -162,8 +174,10 @@ public class RabbitMgmtService {
 	 * @return Node Operations
 	 */
 	public NodeOperations nodes(){
-		
-		return new NodeOperations(httpContext, this);
+
+        checkInitialize();
+
+        return new NodeOperations(httpContext, this);
 	}
 	
 	/**
@@ -171,9 +185,16 @@ public class RabbitMgmtService {
 	 * @return Binding Operations
 	 */
 	public BindingOperations bindings(){
-		
-		return new BindingOperations(httpContext, this);
+
+        checkInitialize();
+
+        return new BindingOperations(httpContext, this);
 	}
+
+    private void checkInitialize(){
+
+        if (httpContext == null) initialize();
+    }
 
     /**
      * Get a builder for the RabbitMgmtService, which can be a little tedious to configure via constructor.
@@ -215,6 +236,13 @@ public class RabbitMgmtService {
             return this;
         }
 
+        public Builder useSsl(boolean shouldUseSsl){
+
+            this.useSsl = shouldUseSsl;
+
+            return this;
+        }
+
         public Builder credentials(String username, String password){
 
             this.provider = new BasicAuthHttpClientProvider(username, password);
@@ -236,7 +264,7 @@ public class RabbitMgmtService {
 
         public RabbitMgmtService build(){
 
-            return new RabbitMgmtService(host, port, useSsl, provider).initialize();
+            return new RabbitMgmtService(host, port, useSsl, provider);
         }
     }
 }
