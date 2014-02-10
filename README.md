@@ -11,6 +11,11 @@ The library was developed in support of our AMPere project (http://github.com/Be
 
 > Note about versions.  This library was originally keeping in sync with the AMPere project (so it started it's life at 3.1.0.  I'm going to break with tradition an let it version as needed.  Sorry for any confusion.
 
+**v3.4.3**
+
+- Java target now set to 1.6 instead of 1.7.
+- Updated Manifest files to reflect the alias change in v3.4.2.
+
 **v3.4.2**
 
 - Added XStream alias so we don't get a funky XML root of `<rabbitmq.loader.Manifest />`.
