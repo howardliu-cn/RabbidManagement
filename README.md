@@ -11,6 +11,15 @@ The library was developed in support of our AMPere project (http://github.com/Be
 
 > Note about versions.  This library was originally keeping in sync with the AMPere project (so it started it's life at 3.1.0.  I'm going to break with tradition an let it version as needed.  Sorry for any confusion.
 
+**v3.4.2**
+
+- Added XStream alias so we don't get a funky XML root of `<rabbitmq.loader.Manifest />`.
+
+**v3.4.1**
+
+- `@Ignore`d the example test case.
+- Added Maven Shade to generate Fat JAR.
+
 **v3.4.0**
 
 - Support for Loading and Persisting topology manifests.  In essence, you can save exchanges, queues, etc. from one source and have them loaded into another RabbitMQ instance.  The manifest can be saved as XML, JSON, or YAML.

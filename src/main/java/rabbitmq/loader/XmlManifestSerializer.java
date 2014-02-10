@@ -12,6 +12,7 @@ public class XmlManifestSerializer implements ManifestSerializer {
 
     static {
 
+        xstream.alias("manifest", Manifest.class);
         xstream.alias("exchange", Exchange.class);
         xstream.alias("queue", Queue.class);
         xstream.alias("binding", Binding.class);
