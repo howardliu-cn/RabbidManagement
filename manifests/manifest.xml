@@ -1,4 +1,4 @@
-<rabbitmq.loader.Manifest>
+<manifest>
   <connectionInfo>
     <hostname>localhost</hostname>
     <port>15672</port>
@@ -126,7 +126,6 @@
       <vhost>/</vhost>
       <destination>apps</destination>
       <destination__type>e</destination__type>
-      <routing__key>*</routing__key>
       <arguments/>
     </binding>
     <binding>
@@ -134,15 +133,6 @@
       <vhost>/</vhost>
       <destination>users</destination>
       <destination__type>e</destination__type>
-      <routing__key>*</routing__key>
-      <arguments/>
-    </binding>
-    <binding>
-      <source>apps</source>
-      <vhost>/</vhost>
-      <destination>app1</destination>
-      <destination__type>q</destination__type>
-      <routing__key>search.events.#</routing__key>
       <arguments/>
     </binding>
     <binding>
@@ -151,6 +141,14 @@
       <destination>app1</destination>
       <destination__type>q</destination__type>
       <routing__key>security.events.#</routing__key>
+      <arguments/>
+    </binding>
+    <binding>
+      <source>apps</source>
+      <vhost>/</vhost>
+      <destination>app1</destination>
+      <destination__type>q</destination__type>
+      <routing__key>search.events.#</routing__key>
       <arguments/>
     </binding>
     <binding>
@@ -202,4 +200,4 @@
       </arguments>
     </binding>
   </bindings>
-</rabbitmq.loader.Manifest>
+</manifest>
