@@ -278,6 +278,11 @@ public class RabbitAssert {
         return this;
     }
 
+    public RabbitAssert hasMessage(String queueName, MessageMatcher... matchers){
+
+        return hasMessage("/", queueName, matchers);
+    }
+
     public RabbitAssert hasMessage(String vhost, String queueName, MessageMatcher... matchers){
 
         Preconditions.checkNotNull(matchers);
@@ -291,6 +296,11 @@ public class RabbitAssert {
         assertTrue(hasMatch(messages.get(), matchers));
 
         return this;
+    }
+
+    public RabbitAssert doesNotHaveMessage(String queueName, MessageMatcher... matchers){
+
+        return doesNotHaveMessage("/", queueName, matchers);
     }
 
     public RabbitAssert doesNotHaveMessage(String vhost, String queueName, MessageMatcher... matchers){
