@@ -11,6 +11,12 @@ The library was developed in support of our AMPere project (http://github.com/Be
 
 > Note about versions.  This library was originally keeping in sync with the AMPere project (so it started it's life at 3.1.0.  I'm going to break with tradition an let it version as needed.  Sorry for any confusion.
 
+**v3.5.1**
+
+- Fixed bugs in the assertion framework.
+- Added Unit Tests.
+- Modified POM to generate source and javadoc JARs.
+
 **v3.5.0**
 
 - Added an easier DSL for verifying the delivery of a single message on multiple queues.
