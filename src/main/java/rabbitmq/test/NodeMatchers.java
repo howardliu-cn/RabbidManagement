@@ -39,6 +39,18 @@ public class NodeMatchers {
         public boolean matches(Node item) {
             return nodeType.equals(item.getType());
         }
+
+        @Override
+        public String getMatchReason(Node item) {
+            return String.format("Node '%s' is of type '%s' and not expected type of '%s'.",
+                    item.getName(), item.getType(), nodeType);
+        }
+
+        @Override
+        public String getNotMatchReason(Node item) {
+
+            return String.format("Node '%s' is of type '%s'.", item.getName(), nodeType);
+        }
     }
 
     public static class RunningMatcher implements NodeMatcher {
@@ -52,6 +64,19 @@ public class NodeMatchers {
         @Override
         public boolean matches(Node item) {
             return item.isRunning() == shouldBeRunning;
+        }
+
+        @Override
+        public String getMatchReason(Node item) {
+
+            return String.format("Node '%s' running status should be '%s' but is not.",
+                    item.getName(), shouldBeRunning);
+        }
+
+        @Override
+        public String getNotMatchReason(Node item) {
+
+            return String.format("Node '%s' has running status of '%s'.", item.getName(), shouldBeRunning);
         }
     }
 }

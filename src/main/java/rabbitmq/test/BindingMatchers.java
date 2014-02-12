@@ -45,6 +45,19 @@ public class BindingMatchers {
         public boolean matches(Binding binding) {
             return source.equals(binding.getSource());
         }
+
+        @Override
+        public String getMatchReason(Binding item) {
+
+            return String.format("Binding should have a source '%s' but actually has '%s'.",
+                    source, item.getSource());
+        }
+
+        @Override
+        public String getNotMatchReason(Binding item) {
+
+            return String.format("Binding has source value of '%s'.", source);
+        }
     }
 
     public static class DestinationMatcher implements BindingMatcher {
@@ -58,6 +71,19 @@ public class BindingMatchers {
         @Override
         public boolean matches(Binding binding) {
             return destination.equals(binding.getDestination());
+        }
+
+        @Override
+        public String getMatchReason(Binding item) {
+
+            return String.format("Binding should have destination '%s' but actually has '%s'.",
+                    destination, item.getDestination());
+        }
+
+        @Override
+        public String getNotMatchReason(Binding item) {
+
+            return String.format("Binding has destination value of '%s'", destination);
         }
     }
 
@@ -73,6 +99,20 @@ public class BindingMatchers {
         public boolean matches(Binding binding) {
             return destinationType.equals(binding.getDestinationType());
         }
+
+        @Override
+        public String getMatchReason(Binding item) {
+
+            return String.format(
+                    "Binding should have destination type of '%s' but actually has '%s' (e=exchange, q=queue).",
+                    destinationType, item.getDestinationType());
+        }
+
+        @Override
+        public String getNotMatchReason(Binding item) {
+
+            return String.format("Binding has destination type of '%s'.", destinationType);
+        }
     }
 
     public static class RouteMatcher implements BindingMatcher {
@@ -87,6 +127,19 @@ public class BindingMatchers {
         public boolean matches(Binding binding) {
 
             return routingKey.equals(binding.getRoutingKey());
+        }
+
+        @Override
+        public String getMatchReason(Binding item) {
+
+            return String.format("Binding should have routing key '%s' but actually has '%s'.",
+                    routingKey, item.getRoutingKey());
+        }
+
+        @Override
+        public String getNotMatchReason(Binding item) {
+
+            return String.format("Binding has routing key value of '%s'.", routingKey);
         }
     }
 }

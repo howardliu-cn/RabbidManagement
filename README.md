@@ -11,6 +11,11 @@ The library was developed in support of our AMPere project (http://github.com/Be
 
 > Note about versions.  This library was originally keeping in sync with the AMPere project (so it started it's life at 3.1.0.  I'm going to break with tradition an let it version as needed.  Sorry for any confusion.
 
+**v3.5.0**
+
+- Added an easier DSL for verifying the delivery of a single message on multiple queues.
+- Added overloads on some of the RabbitAssert methods to take Queue objects instead of just a string queue name.  (I intend to go back and add the same for Binding, User, Exchange, etc.
+
 **v3.4.4**
 
 - Added two missing method overloads in the RabbitAssert class that allowed validation of messages using the default vhost.
@@ -251,4 +256,14 @@ rabbitAssert.hasQueue("test.example.queue", isNotQDurable());
 
 rabbitAssert.hasBinding("test.example.exchange", "test.example.queue", routingKey("test.topic"), isExToQ());
 
+```
+
+The test framework include support for testing complex message flows in the exchange:
+
+```java
+rabbitAssert.verifyDelivery()
+  .on("test.example.queue")
+  .butNotOn("test.example.queue2")
+  .deliver("test.example.exchange",
+    Message.builder().routingKey("test.topic").payload("Hello Rabbid Mgmt!").build());
 ```

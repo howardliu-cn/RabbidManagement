@@ -44,6 +44,19 @@ public class QueueMatchers {
         public boolean matches(Queue queue) {
             return count == queue.getMessages();
         }
+
+        @Override
+        public String getMatchReason(Queue item) {
+
+            return String.format("Queue '%s' should have '%s' messages but has '%s'.",
+                    item.getName(), count, item.getMessages());
+        }
+
+        @Override
+        public String getNotMatchReason(Queue item) {
+
+            return String.format("Queue '%s' has '%s' messages.", item.getName(), count);
+        }
     }
 
     public static class DurableMatcher implements QueueMatcher {
@@ -59,6 +72,19 @@ public class QueueMatchers {
 
             return queue.isDurable() == shouldBeDurable;
         }
+
+        @Override
+        public String getMatchReason(Queue item) {
+
+            return String.format("Queue '%s' durable status should be '%s' but is not.",
+                    item.getName(), shouldBeDurable);
+        }
+
+        @Override
+        public String getNotMatchReason(Queue item) {
+
+            return String.format("Queue '%s' has durable status of '%s'.", item.getName(), shouldBeDurable);
+        }
     }
 
     public static class AutoDeleteMatcher implements QueueMatcher {
@@ -73,6 +99,19 @@ public class QueueMatchers {
         public boolean matches(Queue queue) {
 
             return queue.isAutoDelete() == shouldBeAutoDelete;
+        }
+
+        @Override
+        public String getMatchReason(Queue item) {
+
+            return String.format("Queue '%s' autodelete status should be '%s' but is not.",
+                    item.getName(), shouldBeAutoDelete);
+        }
+
+        @Override
+        public String getNotMatchReason(Queue item) {
+
+            return String.format("Queue '%s' has autodelete status of '%s'.", item.getName(), shouldBeAutoDelete);
         }
     }
 }

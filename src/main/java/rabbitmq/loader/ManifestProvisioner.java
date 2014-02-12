@@ -186,9 +186,9 @@ public class ManifestProvisioner {
 
         // Explanation for:  What the heck is going on here?
         // Bindings do not have "id's" and since it's possible to have as many bindings as you want,
-        // and they can even have the same routing key, there's no way to effectively distinguish them.
+        // and they can even have the same routing key, there's notMatch way to effectively distinguish them.
         // So, RabbitMQ considers the "ID" to be the "property_key", which can be one of the follow:
-        // 1.  The routing key URL-encoded, if there are no "arguments" present on the binding.
+        // 1.  The routing key URL-encoded, if there are notMatch "arguments" present on the binding.
         // 2.  A hash of the routing key and the "arguments".
         // Since it's not obvious how this hash is generated (and I'm too lazy to look it up),
         // a more practical solution is to query RabbitMQ first and retrieve all bindings between

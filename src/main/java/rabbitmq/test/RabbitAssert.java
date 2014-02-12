@@ -1,9 +1,6 @@
 package rabbitmq.test;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
+import com.google.common.base.*;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import rabbitmq.mgmt.RabbitMgmtService;
@@ -23,77 +20,141 @@ public class RabbitAssert {
 
     private RabbitMgmtService mgmt;
 
+    /**
+     * Initialize the Assertion framework with a pre-configured management instance.
+     * @param mgmt pre-configured management instance.
+     */
     public RabbitAssert(RabbitMgmtService mgmt){
         this.mgmt = mgmt;
     }
 
+    /**
+     * Assert that RabbitMQ has the specified node.
+     * @param nodeName Name of the node to ensure exists.
+     * @param matchers Modifies the assertion by adding criteria to match.
+     * @return this.
+     */
     public RabbitAssert hasNode(String nodeName, NodeMatcher... matchers){
 
         Optional<Node> node = mgmt.nodes().get(nodeName);
 
-        assertTrue(node.isPresent());
+        assertTrue(String.format("Node '%s' does not exist.", nodeName), node.isPresent());
 
-        if (matchers != null && matchers.length > 0) assertTrue(isMatch(node.get(), matchers));
+        if (matchers != null && matchers.length > 0) {
 
-        return this;
-    }
+            MatchResult result = isMatch(node.get(), matchers);
 
-    public RabbitAssert doesNotHaveNode(String nodeName, NodeMatcher... matchers){
-
-        Optional<Node> node = mgmt.nodes().get(nodeName);
-
-        if (node.isPresent()){
-            if (matchers != null && matchers.length > 0) assertFalse(isMatch(node.get(), matchers));
+            assertTrue(result.getReason(), result.isMatch());
         }
 
         return this;
     }
 
+    /**
+     * Assert that RabbitMQ does not have the specified node.
+     * @param nodeName Name of the node that should not exist.
+     * @param matchers Modifies the assertion by adding criteria to match.
+     * @return this.
+     */
+    public RabbitAssert doesNotHaveNode(String nodeName, NodeMatcher... matchers){
+
+        Optional<Node> node = mgmt.nodes().get(nodeName);
+
+        if (node.isPresent()){
+
+            if (matchers != null && matchers.length > 0) {
+
+                MatchResult result = isMatch(node.get(), matchers);
+
+                assertFalse(result.getReason(), result.isMatch());
+            }
+            else {
+
+                fail(String.format("Node '%s' should not exist but does.", nodeName));
+            }
+        }
+
+        return this;
+    }
+
+    /**
+     * Assert that RabbitMQ has the specified Virtual Host.
+     * @param vhostName VHost that should exist.
+     * @return this.
+     */
     public RabbitAssert hasVHost(String vhostName){
 
         Optional<VirtualHost> vhost = mgmt.vhosts().get(vhostName);
 
-        assertTrue(vhost.isPresent());
+        assertTrue(String.format("VHost '%s' should exist but does not.", vhostName), vhost.isPresent());
 
         return this;
     }
 
+    /**
+     * Assert that the specified Virtual Host does not exist in the RabbitMQ cluster.
+     * @param vhostName Name of the vhost that should not exist.
+     * @return this.
+     */
     public RabbitAssert doesNotHaveVHost(String vhostName){
 
         Optional<VirtualHost> vhost = mgmt.vhosts().get(vhostName);
 
-        assertFalse(vhost.isPresent());
+        assertFalse(String.format("VHost '%s' should not exist but does.", vhostName), vhost.isPresent());
 
         return this;
     }
 
+    /**
+     * Assert that RabbitMQ has the specified User.
+     * @param username Name of the user that should exist.
+     * @return this.
+     */
     public RabbitAssert hasUser(String username){
 
         Optional<User> user = mgmt.users().get(username);
 
-        assertTrue(user.isPresent());
+        assertTrue(String.format("User '%s' should exist but does not.", username), user.isPresent());
 
         return this;
     }
 
+    /**
+     * Assert that RabbitMQ does not have the specified user.
+     * @param username Name of the user that should not exist.
+     * @return this.
+     */
     public RabbitAssert doesNotHaveUser(String username){
 
         Optional<User> user = mgmt.users().get(username);
 
-        assertFalse(user.isPresent());
+        assertFalse(String.format("User '%s' should not exist but does.", username), user.isPresent());
 
         return this;
     }
 
+    /**
+     * Assert that the current authenticated user (interacting with the Management Console) is
+     * the one specified.
+     * @param username Name of the user that should be interacting with the console.
+     * @return this.
+     */
     public RabbitAssert iAm(String username){
 
         User clientUser = mgmt.users().whoAmI();
 
-        assertEquals(username, clientUser.getName());
+        assertEquals(String.format("Current user should be '%s', but is actually '%s'.",
+                username, clientUser.getName()), username, clientUser.getName());
 
         return this;
     }
 
+    /**
+     * Assert that the specified user has the specified tags.
+     * @param username Name of the user.
+     * @param expectedTags Tags that the user should have.
+     * @return this.
+     */
     public RabbitAssert userHasTags(String username, String... expectedTags){
 
         Preconditions.checkNotNull(expectedTags);
@@ -101,7 +162,7 @@ public class RabbitAssert {
 
         Optional<User> user = mgmt.users().get(username);
 
-        assertTrue(user.isPresent());
+        assertTrue(String.format("User '%s' does not exist and should.", username), user.isPresent());
 
         String tagCsv = user.get().getTags();
 
@@ -109,16 +170,24 @@ public class RabbitAssert {
 
             List<String> tagList = splitTags(tagCsv);
 
-            assertTrue(tagList.containsAll(Arrays.asList(expectedTags)));
+            assertTrue(String.format("User '%s' does not have the tags [%s]; current tags are [%s].",
+                    username, tagCsv, Joiner.on(",").join(expectedTags)),
+                    tagList.containsAll(Arrays.asList(expectedTags)));
         }
         else {
 
-            fail();
+            fail(String.format("User '%s' does not have any tags.", username));
         }
 
         return this;
     }
 
+    /**
+     * Assert that the user does not have the specified tags.
+     * @param username Name of the user.
+     * @param notExpectedTags Tags that should not exist.
+     * @return this.
+     */
     public RabbitAssert userNotHaveTags(String username, String... notExpectedTags){
 
         Preconditions.checkNotNull(notExpectedTags);
@@ -126,7 +195,7 @@ public class RabbitAssert {
 
         Optional<User> user = mgmt.users().get(username);
 
-        assertTrue(user.isPresent());
+        assertTrue(String.format("User '%s' does not exist and should.", username), user.isPresent());
 
         String tagCsv = user.get().getTags();
 
@@ -135,154 +204,442 @@ public class RabbitAssert {
             List<String> tagList = splitTags(tagCsv);
 
             for (String notExpectedTag : notExpectedTags)
-                assertFalse(tagList.contains(notExpectedTag));
+                assertFalse(
+                        String.format("User '%s' has tag '%s' and should not.", notExpectedTag),
+                        tagList.contains(notExpectedTag));
         }
 
         return this;
     }
 
+    /**
+     * Assert that the User has the specified read permission.
+     * @param user Name of the user.
+     * @param permissionExpression Value of the permission.
+     * @return this.
+     */
     public RabbitAssert userHasReadPermission(String user, String permissionExpression){
 
         return this.userHasPermission("/", user, permissionExpression, 1);
     }
 
+    /**
+     * Assert that the User has the specified read permission.
+     * @param vhost Virtual Host with the permission.
+     * @param user Name of the user.
+     * @param permissionExpression Value of the permission.
+     * @return this.
+     */
     public RabbitAssert userHasReadPermission(String vhost, String user, String permissionExpression){
 
         return this.userHasPermission(vhost, user, permissionExpression, 1);
     }
 
+    /**
+     * Assert that the User has the specified write permission.
+     * @param user Name of the user.
+     * @param permissionExpression Value of the permission.
+     * @return this.
+     */
     public RabbitAssert userHasWritePermission(String user, String permissionExpression){
 
         return this.userHasPermission("/", user, permissionExpression, 2);
     }
 
+    /**
+     * Assert that the User has the specified write permission.
+     * @param vhost Virtual Host with the permission.
+     * @param user Name of the user.
+     * @param permissionExpression Value of the permission.
+     * @return this.
+     */
     public RabbitAssert userHasWritePermission(String vhost, String user, String permissionExpression){
 
         return this.userHasPermission(vhost, user, permissionExpression, 2);
     }
 
+    /**
+     * Assert that the User has the specified configure permission.
+     * @param user Name of the user.
+     * @param permissionExpression Value of the permission.
+     * @return this.
+     */
     public RabbitAssert userHasConfigurePermission(String user, String permissionExpression){
 
         return this.userHasPermission("/", user, permissionExpression, 3);
     }
 
+    /**
+     * Assert that the User has the specified configure permission.
+     * @param vhost Virtual Host with the permission.
+     * @param user Name of the user.
+     * @param permissionExpression Value of the permission.
+     * @return this.
+     */
     public RabbitAssert userHasConfigurePermission(String vhost, String user, String permissionExpression){
 
         return this.userHasPermission(vhost, user, permissionExpression, 3);
     }
 
+
     private RabbitAssert userHasPermission(String vhost, String user, String permissionExpression, int permissionType){
 
         Optional<Permission> permission = mgmt.permissions().get(vhost, user);
 
-        assertTrue(permission.isPresent());
+        assertTrue(String.format("User '%s' does not have permission '%s' on vhost '%s'",
+                user, permissionExpression, vhost),
+                permission.isPresent());
+
+        String actualPermission = null;
+        String permissionTypeDescription = null;
 
         switch (permissionType){
-            case 1: assertEquals(permissionExpression, permission.get().getRead()); break;
-            case 2: assertEquals(permissionExpression, permission.get().getWrite()); break;
-            default: assertEquals(permissionExpression, permission.get().getConfigure()); break;
+            case 1:
+                actualPermission =  permission.get().getRead();
+                permissionTypeDescription = "read";
+                break;
+            case 2:
+                actualPermission = permission.get().getWrite();
+                permissionTypeDescription = "write";
+                break;
+            default:
+                actualPermission = permission.get().getConfigure();
+                permissionTypeDescription = "configure";
+                break;
+        }
+
+        assertEquals(String.format("User '%s' permission '%s' should be '%s' but is '%s' on vhost '%s'.",
+                user, permissionTypeDescription, permissionExpression, actualPermission, vhost),
+                permissionExpression, actualPermission);
+
+        return this;
+    }
+
+    /**
+     * Assert that RabbitMQ has the specified exchange.
+     * @param exchangeName Name of the Exchange on the default virtual host.
+     * @param matchers Modifies the assertion by adding criteria to match.
+     * @return this.
+     */
+    public RabbitAssert hasExchange(String exchangeName, ExchangeMatcher... matchers){
+
+        return hasExchange("/", exchangeName, matchers);
+    }
+
+    /**
+     * Assert that RabbitMQ has the specified exchange.
+     * @param vhost Virtual Host with the exchange.
+     * @param exchangeName Name of the exchange.
+     * @param matchers Modifies the assertion by adding criteria to match.
+     * @return this.
+     */
+    public RabbitAssert hasExchange(String vhost, String exchangeName, ExchangeMatcher... matchers){
+
+        Optional<Exchange> exchange = mgmt.exchanges().get(vhost, exchangeName);
+
+        assertTrue(String.format("Exchange '%s' does not exist on vhost '%s'.", exchangeName, vhost),
+                exchange.isPresent());
+
+        if (matchers != null && matchers.length > 0) {
+
+            MatchResult result = isMatch(exchange.get(), matchers);
+
+            assertTrue(result.getReason(), result.isMatch());
         }
 
         return this;
     }
 
-    public RabbitAssert hasExchange(String exchangeName, ExchangeMatcher... matchers){
-
-        return hasExchange("/", exchangeName);
-    }
-
-    public RabbitAssert hasExchange(String vhost, String exchangeName, ExchangeMatcher... matchers){
-
-        Optional<Exchange> exchange = mgmt.exchanges().get(vhost, exchangeName);
-
-        assertTrue(exchange.isPresent());
-
-        if (matchers != null && matchers.length > 0) assertTrue(isMatch(exchange.get(), matchers));
-
-        return this;
-    }
-
+    /**
+     * Assert that RabbitMQ does not have the following exchange.
+     * @param exchangeName Name of the exchange.
+     * @return this.
+     */
     public RabbitAssert doesNotHaveExchange(String exchangeName){
 
         return this.doesNotHaveExchange("/", exchangeName);
     }
 
+    /**
+     * Assert that RabbitMQ does not have the following exchange.
+     * @param vhost Name of the vhost with the exchange.
+     * @param exchangeName Name of the exchange.
+     * @return this.
+     */
     public RabbitAssert doesNotHaveExchange(String vhost, String exchangeName){
 
         Optional<Exchange> exchange = mgmt.exchanges().get(vhost, exchangeName);
 
-        assertFalse(exchange.isPresent());
+        assertFalse(
+                String.format("Exchange '%s' exists and should not on vhost '%s'.", exchangeName, vhost),
+                exchange.isPresent());
 
         return this;
     }
 
+    /**
+     * Assert that RabbitMQ has the specified queue on the default virtual host.
+     * @param queueName Name of the Queue.
+     * @param matchers Modifies the assertion by adding criteria to match.
+     * @return this.
+     */
     public RabbitAssert hasQueue(String queueName, QueueMatcher... matchers){
 
         return hasQueue("/", queueName, matchers);
     }
 
+    /**
+     * Assert that RabbitMQ has the specified queue.
+     * @param vhost Name of the vhost with the queue.
+     * @param queueName Name of the Queue.
+     * @param matchers Modifies the assertion by adding criteria to match.
+     * @return this.
+     */
     public RabbitAssert hasQueue(String vhost, String queueName, QueueMatcher... matchers) {
 
         Optional<Queue> queue = mgmt.queues().get(vhost, queueName);
 
-        assertTrue(queue.isPresent());
+        assertTrue(
+             String.format("Queue '%s' does not exist and should on vhost '%s'.", queueName, vhost), queue.isPresent());
 
-        if (matchers != null && matchers.length > 0) assertTrue(isMatch(queue.get(), matchers));
+        if (matchers != null && matchers.length > 0) {
+
+            MatchResult result = isMatch(queue.get(), matchers);
+
+            assertTrue(result.getReason(), result.isMatch());
+        }
 
         return this;
     }
 
+    /**
+     * Assert that RabbitMQ does not have the queue specified on the default virtual host.
+     * @param queueName Name of the Queue that should not exist.
+     * @return this.
+     */
     public RabbitAssert doesNotHaveQueue(String queueName){
 
         return doesNotHaveQueue("/", queueName);
     }
 
+    /**
+     * Assert that RabbitMQ does not have the queue specified on the default virtual host.
+     * @param vhost Name of the vhost with the queue.
+     * @param queueName Name of the Queue that should not exist.
+     * @return this.
+     */
     public RabbitAssert doesNotHaveQueue(String vhost, String queueName) {
 
         Optional<Queue> queue = mgmt.queues().get(vhost, queueName);
 
-        assertFalse(queue.isPresent());
+        assertFalse(
+             String.format("Queue '%s' does not exist and should on vhost '%s'.", queueName, vhost), queue.isPresent());
 
         return this;
     }
 
-    public RabbitAssert hasBinding(String exchange, String queue, BindingMatcher... matchers) {
+    /**
+     * Assert that the specified binding exists between an Exchange and a Queue.
+     * @param exchange Name of the source exchange.
+     * @param queue Name of the destination queue.
+     * @param matchers Modifies the assertion by adding criteria to match.
+     * @return this.
+     */
+    public RabbitAssert hasEtoQBinding(String exchange, String queue, BindingMatcher... matchers) {
 
-        return hasBinding("/", exchange, queue, matchers);
+        return hasEtoQBinding("/", exchange, queue, matchers);
     }
 
-    public RabbitAssert hasBinding(String vhost, String exchange, String queue, BindingMatcher... matchers) {
+    /**
+     * Assert that the specified binding exists between an Exchange and a Queue.
+     * @param vhost Name of the vhost with the binding.
+     * @param exchange Name of the source exchange.
+     * @param queue Name of the destination queue.
+     * @param matchers Modifies the assertion by adding criteria to match.
+     * @return this.
+     */
+    public RabbitAssert hasEtoQBinding(String vhost, String exchange, String queue, BindingMatcher... matchers) {
 
         Optional<Collection<Binding>> bindings = mgmt.bindings().getEtoQ(vhost, exchange, queue);
 
-        assertTrue(bindings.isPresent());
-        assertTrue(bindings.get().size() > 0);
+        assertTrue(
+                String.format("No E->Q binding found for '%s' and '%s' on vhost '%s'",                        exchange, queue, vhost), 
+                bindings.isPresent());
 
-        if (matchers != null && matchers.length > 0) assertTrue(hasMatch(bindings.get(), matchers));
+        assertTrue(
+                String.format("No E->Q binding found for '%s' and '%s' on vhost '%s'",
+                    exchange, queue, vhost),
+                bindings.get().size() > 0);
+
+        if (matchers != null && matchers.length > 0) {
+
+            MatchResult result = hasMatch(bindings.get(), matchers);
+
+            assertTrue(result.getReason(), result.isMatch());
+        }
 
         return this;
     }
 
-    public RabbitAssert doesNotHaveBinding(String exchange, String queue, BindingMatcher... matchers) {
+    /**
+     * Assert that the specified binding exists between an Exchange and another Exchange.
+     * @param sourceExchange Name of the source exchange.
+     * @param destinationExchange Name of the destination exchange.
+     * @param matchers Modifies the assertion by adding criteria to match.
+     * @return this.
+     */
+    public RabbitAssert hasEtoEBinding(String sourceExchange, String destinationExchange, BindingMatcher... matchers) {
 
-        return doesNotHaveBinding("/", exchange, queue, matchers);
+        return hasEtoQBinding("/", sourceExchange, destinationExchange, matchers);
     }
 
-    public RabbitAssert doesNotHaveBinding(String vhost, String exchange, String queue, BindingMatcher... matchers) {
+    /**
+     * Assert that the specified binding exists between an Exchange and another Exchange.
+     * @param vhost Name of the vhost with the binding.
+     * @param sourceExchange Name of the source exchange.
+     * @param destinationExchange Name of the destination exchange.
+     * @param matchers Modifies the assertion by adding criteria to match.
+     * @return this.
+     */
+    public RabbitAssert hasEtoEBinding(String vhost, String sourceExchange, String destinationExchange, BindingMatcher... matchers) {
+
+        Optional<Collection<Binding>> bindings = mgmt.bindings().getEtoE(vhost, sourceExchange, destinationExchange);
+
+        assertTrue(
+                String.format("No E->E binding found for '%s' and '%s' on vhost '%s'",
+                    sourceExchange, destinationExchange, vhost),
+                bindings.isPresent());
+
+        assertTrue(
+                String.format("No E->E binding found for '%s' and '%s' on vhost '%s'",
+                    sourceExchange, destinationExchange, vhost),
+                bindings.get().size() > 0);
+
+        if (matchers != null && matchers.length > 0) {
+
+            MatchResult result = hasMatch(bindings.get(), matchers);
+
+            assertTrue(result.getReason(), result.isMatch());
+        }
+
+        return this;
+    }
+
+    /**
+     * Assert that RabbitMQ does not have a binding for the specified exchange and queue.
+     * @param exchange Name of the source exchange.
+     * @param queue Name of the destination queue.
+     * @param matchers Modifies the assertion by adding criteria to match.
+     * @return this.
+     */
+    public RabbitAssert doesNotHaveEtoQBinding(String exchange, String queue, BindingMatcher... matchers) {
+
+        return doesNotHaveEtoQBinding("/", exchange, queue, matchers);
+    }
+
+    /**
+     * Assert that RabbitMQ does not have a binding for the specified exchange and queue.
+     * @param vhost Name of the vhost with the binding.
+     * @param exchange Name of the source exchange.
+     * @param queue Name of the destination queue.
+     * @param matchers Modifies the assertion by adding criteria to match.
+     * @return this.
+     */
+    public RabbitAssert doesNotHaveEtoQBinding(String vhost, String exchange, String queue, BindingMatcher... matchers) {
 
         Optional<Collection<Binding>> bindings = mgmt.bindings().getEtoQ(vhost, exchange, queue);
 
-        if (bindings.isPresent() && bindings.get().size() > 0)
-            if (matchers != null && matchers.length > 0) assertFalse(hasMatch(bindings.get(), matchers));
+        if (bindings.isPresent() && bindings.get().size() > 0) {
+
+            if (matchers != null && matchers.length > 0) {
+
+                MatchResult result = doesNotHaveMatch(bindings.get(), matchers);
+
+                assertFalse(result.getReason(), result.isMatch());
+            }
+            else {
+
+                fail(String.format("E->Q binding found for '%s' and '%s' on vhost '%s' that should not exist.",
+                        exchange, queue, vhost));
+            }
+        }
 
         return this;
     }
 
+    /**
+     * Assert that RabbitMQ does not have a binding for the specified exchange and exchange.
+     * @param sourceExchange Name of the source exchange.
+     * @param destinationExchange Name of the destination exchange..
+     * @param matchers Modifies the assertion by adding criteria to match.
+     * @return this.
+     */
+    public RabbitAssert doesNotHaveBindingEtoE(
+            String sourceExchange, String destinationExchange, BindingMatcher... matchers) {
+
+        return doesNotHaveBindingEtoE("/", sourceExchange, destinationExchange, matchers);
+    }
+
+    /**
+     * Assert that RabbitMQ does not have a binding for the specified exchange and exchange.
+     * @param vhost Name of the vhost with the binding.
+     * @param sourceExchange Name of the source exchange.
+     * @param destinationExchange Name of the destination exchange..
+     * @param matchers Modifies the assertion by adding criteria to match.
+     * @return this.
+     */
+    public RabbitAssert doesNotHaveBindingEtoE(
+            String vhost, String sourceExchange, String destinationExchange, BindingMatcher... matchers) {
+
+        Optional<Collection<Binding>> bindings = mgmt.bindings().getEtoE(vhost, sourceExchange, destinationExchange);
+
+        if (bindings.isPresent() && bindings.get().size() > 0) {
+
+            if (matchers != null && matchers.length > 0) {
+
+                MatchResult result = doesNotHaveMatch(bindings.get(), matchers);
+
+                assertFalse(result.getReason(), result.isMatch());
+            }
+            else {
+
+                fail(String.format("E->E binding found for '%s' and '%s' on vhost '%s' that should not exist.",
+                        sourceExchange, destinationExchange, vhost));
+            }
+        }
+
+        return this;
+    }
+
+    /**
+     * Assert that the specified Queue has a message matching the supplied matcher query.
+     * @param queueName Name of the Queue.
+     * @param matchers Criteria for match the message.
+     * @return this.
+     */
     public RabbitAssert hasMessage(String queueName, MessageMatcher... matchers){
 
         return hasMessage("/", queueName, matchers);
     }
 
+    /**
+     * Assert that the specified Queue has a message matching the supplied matcher query.
+     * @param queue Queue.
+     * @param matchers Criteria for match the message.
+     * @return this.
+     */
+    public RabbitAssert hasMessage(Queue queue, MessageMatcher... matchers){
+
+        return hasMessage(queue.getVhost(), queue.getName(), matchers);
+    }
+
+    /**
+     * Assert that the specified Queue has a message matching the supplied criteria.
+     * @param vhost Name of the vhost with the queue.
+     * @param queueName Name of the Queue.
+     * @param matchers Criteria for match the message.
+     * @return this.
+     */
     public RabbitAssert hasMessage(String vhost, String queueName, MessageMatcher... matchers){
 
         Preconditions.checkNotNull(matchers);
@@ -290,19 +647,50 @@ public class RabbitAssert {
         Optional<Collection<ReceivedMessage>> messages =
                 mgmt.queues().consume(vhost, queueName, ConsumeOptions.builder().retrieveAtMost(100).build());
 
-        assertTrue(messages.isPresent());
-        assertTrue(messages.get().size() > 0);
+        assertTrue(
+                String.format("Queue '%s' on vhost '%s' does not have any messages.", queueName, vhost),
+                messages.isPresent());
 
-        assertTrue(hasMatch(messages.get(), matchers));
+        assertTrue(
+                String.format("Queue '%s' on vhost '%s' does not have any messages.", queueName, vhost),
+                messages.get().size() > 0);
+
+        MatchResult result = hasMatch(messages.get(), matchers);
+
+        assertTrue(result.getReason(), result.isMatch());
 
         return this;
     }
 
+    /**
+     * Assert that the specified Queue does not have the message matching the supplied criteria.
+     * @param queue Queue.
+     * @param matchers Criteria for match the message.
+     * @return this.
+     */
+    public RabbitAssert doesNotHaveMessage(Queue queue, MessageMatcher... matchers){
+
+        return doesNotHaveMessage(queue.getVhost(), queue.getName(), matchers);
+    }
+
+    /**
+     * Assert that the specified Queue does not have the message matching the supplied criteria.
+     * @param queueName Name of the Queue..
+     * @param matchers Criteria for match the message.
+     * @return this.
+     */
     public RabbitAssert doesNotHaveMessage(String queueName, MessageMatcher... matchers){
 
         return doesNotHaveMessage("/", queueName, matchers);
     }
 
+    /**
+     * Assert that the specified Queue does not have the message matching the supplied criteria.
+     * @param vhost Name of the vhost with the queue.
+     * @param queueName Name of the Queue.
+     * @param matchers Criteria for match the message.
+     * @return this.
+     */
     public RabbitAssert doesNotHaveMessage(String vhost, String queueName, MessageMatcher... matchers){
 
         Preconditions.checkNotNull(matchers);
@@ -310,9 +698,33 @@ public class RabbitAssert {
         Optional<Collection<ReceivedMessage>> messages =
                 mgmt.queues().consume(vhost, queueName, ConsumeOptions.builder().retrieveAtMost(100).build());
 
-        if (messages.isPresent() && messages.get().size() > 0) assertFalse(hasMatch(messages.get(), matchers));
+        if (messages.isPresent() && messages.get().size() > 0) {
+
+            MatchResult result = doesNotHaveMatch(messages.get(), matchers);
+
+            assertFalse(result.getReason(), result.isMatch());
+        }
 
         return this;
+    }
+
+    /**
+     * Verify the delivery of a message (or non-delivery) on multiple queues.
+     * @return A DeliveryVerification fluent interface.
+     */
+    public DeliveryVerification verifyDelivery(){
+
+        return new DeliveryVerification(null);
+    }
+
+    /**
+     * Verify the delivery of a message (or non-delivery) on multiple queues.
+     * @param matchers Criteria for match the message.
+     * @return A DeliveryVerification fluent interface.
+     */
+    public DeliveryVerification verifyDelivery(MessageMatcher... matchers){
+
+        return new DeliveryVerification(matchers);
     }
 
     private static List<String> splitTags(String tagCsv){
@@ -326,19 +738,206 @@ public class RabbitAssert {
         return tagList;
     }
 
-    private static <T> boolean hasMatch(Collection<T> items, Matcher<T>[] matchers){
+    private static <T> MatchResult hasMatch(Collection<T> items, Matcher<T>[] matchers){
 
-        for (T item : items) if (isMatch(item, matchers)) return true;
+        List<String> reasons = Lists.newArrayList();
 
-        return false;
+        for (T item : items){
+
+            MatchResult result = isMatch(item, matchers);
+
+            if (result.isMatch){
+
+                return result;
+            }
+            else {
+
+                reasons.add(result.getReason());
+            }
+        }
+
+        return MatchResult.doesNotMatch(Joiner.on("\n").join(reasons));
     }
 
-    private static <T> boolean isMatch(T item, Matcher<T>[] matchers){
+    private static <T> MatchResult doesNotHaveMatch(Collection<T> items, Matcher<T>[] matchers){
 
-        for(Matcher<T> matcher : matchers) if (!matcher.matches(item)) return false;
+        List<String> reasons = Lists.newArrayList();
 
-        return true;
+        for (T item : items){
+
+            MatchResult result = doesNotMatch(item, matchers);
+
+            if (result.isMatch()){
+
+                reasons.add(result.getReason());
+            }
+        }
+
+        if (reasons.size() == 0) return MatchResult.doesNotMatch();
+
+        return MatchResult.hasMatch(Joiner.on("\n").join(reasons));
     }
 
+    private static <T> MatchResult isMatch(T item, Matcher<T>[] matchers){
 
+        for(Matcher<T> matcher : matchers){
+
+            if (!matcher.matches(item)) {
+
+                return MatchResult.doesNotMatch(matcher.getMatchReason(item));
+            }
+        }
+
+        return MatchResult.hasMatch();
+    }
+
+    private static <T> MatchResult doesNotMatch(T item, Matcher<T>[] matchers){
+
+        List<String> matchReasons = Lists.newArrayList();
+
+        for(Matcher<T> matcher : matchers){
+
+            if (matcher.matches(item)){
+
+                matchReasons.add(matcher.getNotMatchReason(item));
+            }
+            else {
+
+                MatchResult.doesNotMatch();
+            }
+        }
+        return MatchResult.hasMatch(Joiner.on("\n").join(matchReasons));
+    }
+
+    public static class MatchResult {
+
+        String reason;
+
+        boolean isMatch = false;
+
+        public MatchResult(String reason, boolean isMatch) {
+            this.reason = reason;
+            this.isMatch = isMatch;
+        }
+
+        public String getReason() {
+            return reason;
+        }
+
+        public boolean isMatch() {
+            return isMatch;
+        }
+
+        public static MatchResult hasMatch(){
+
+            return new MatchResult(null, true);
+        }
+
+        public static MatchResult hasMatch(String reason){
+
+            return new MatchResult(reason, true);
+        }
+
+        public static MatchResult doesNotMatch(){
+
+            return new MatchResult(null, false);
+        }
+
+        public static MatchResult doesNotMatch(String reason){
+
+            return new MatchResult(reason, false);
+        }
+    }
+
+    public class DeliveryVerification {
+
+        MessageMatcher[] matchers;
+
+        List<Queue> shouldHaveMessage = Lists.newArrayList();
+
+        List<Queue> shouldNotHaveMessage = Lists.newArrayList();
+
+        public DeliveryVerification(MessageMatcher[] matchers){
+
+            this.matchers = matchers;
+        }
+
+        public DeliveryVerification on(String... queues){
+
+            for (String queueName : queues){
+
+                shouldHaveMessage.add(new Queue(queueName));
+            }
+
+            return this;
+        }
+
+        public DeliveryVerification on(Queue... queues){
+
+            shouldHaveMessage.addAll(Arrays.asList(queues));
+
+            return this;
+        }
+
+        public DeliveryVerification butNotOn(Queue... queues){
+
+            return notOn(queues);
+        }
+
+        public DeliveryVerification butNotOn(String... queues){
+
+            return notOn(queues);
+        }
+
+        public DeliveryVerification notOn(Queue... queues){
+
+            shouldNotHaveMessage.addAll(Arrays.asList(queues));
+
+            return this;
+        }
+
+        public DeliveryVerification notOn(String... queues){
+
+            for (String queueName : queues){
+
+                shouldNotHaveMessage.add(new Queue(queueName));
+            }
+
+            return this;
+        }
+
+        public void deliver(String exchangeName, Message message){
+
+            deliver("/", exchangeName, message);
+        }
+
+        public void deliver(String vhost, String exchangeName, Message message){
+
+            // If matchers weren't supplied, we'll use the default equivalence test.
+            checkMatchers(message);
+
+            mgmt.exchanges().publish(vhost, exchangeName, message);
+
+            makeAssertions();
+        }
+
+        private void checkMatchers(Message message){
+
+            if (matchers == null || matchers.length == 0)
+                matchers = new MessageMatcher[]{ MessageMatchers.marked(message) };
+        }
+
+        private void makeAssertions() {
+
+            for (Queue q : shouldHaveMessage){
+
+                hasMessage(q, matchers);
+            }
+
+            for (Queue q : shouldNotHaveMessage){
+
+                doesNotHaveMessage(q, matchers);
+            }
+        }
+    }
 }

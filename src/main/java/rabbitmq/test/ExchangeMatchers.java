@@ -65,6 +65,19 @@ public class ExchangeMatchers {
         public boolean matches(Exchange exchange) {
             return exchangeType.equals(exchange.getType());
         }
+
+        @Override
+        public String getMatchReason(Exchange item) {
+
+            return String.format("Exchange '%s' should be type '%s' but actually is '%s'.",
+                    item.getName(), exchangeType, item.getType());
+        }
+
+        @Override
+        public String getNotMatchReason(Exchange item) {
+
+            return String.format("Exchange '%s' is of type '%s'", item.getName(), exchangeType);
+        }
     }
 
     public static class DurableMatcher implements ExchangeMatcher {
@@ -80,6 +93,19 @@ public class ExchangeMatchers {
 
             return exchange.isDurable() == shouldBeDurable;
         }
+
+        @Override
+        public String getMatchReason(Exchange item) {
+
+            return String.format("Exchange '%s' durable status should be '%s' but is not.",
+                    item.getName(), shouldBeDurable);
+        }
+
+        @Override
+        public String getNotMatchReason(Exchange item) {
+
+            return String.format("Exchange '%s' has durable status of '%s'.", item.getName(), shouldBeDurable);
+        }
     }
 
     public static class AutoDeleteMatcher implements ExchangeMatcher {
@@ -94,6 +120,19 @@ public class ExchangeMatchers {
         public boolean matches(Exchange exchange) {
 
             return exchange.isAutoDelete() == shouldBeAutoDelete;
+        }
+
+        @Override
+        public String getMatchReason(Exchange item) {
+
+            return String.format("Exchange '%s' autodelete status should be '%s' but is not.",
+                    item.getName(), shouldBeAutoDelete);
+        }
+
+        @Override
+        public String getNotMatchReason(Exchange item) {
+
+            return String.format("Exchange '%s' has autodelete status of '%s'.", item.getName(), shouldBeAutoDelete);
         }
     }
 }
