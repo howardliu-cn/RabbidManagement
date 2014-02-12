@@ -47,14 +47,14 @@ public class BindingMatchers {
         }
 
         @Override
-        public String getMatchReason(Binding item) {
+        public String getNotMatchReason(Binding item) {
 
             return String.format("Binding should have a source '%s' but actually has '%s'.",
                     source, item.getSource());
         }
 
         @Override
-        public String getNotMatchReason(Binding item) {
+        public String getMatchReason(Binding item) {
 
             return String.format("Binding has source value of '%s'.", source);
         }
@@ -74,14 +74,14 @@ public class BindingMatchers {
         }
 
         @Override
-        public String getMatchReason(Binding item) {
+        public String getNotMatchReason(Binding item) {
 
             return String.format("Binding should have destination '%s' but actually has '%s'.",
                     destination, item.getDestination());
         }
 
         @Override
-        public String getNotMatchReason(Binding item) {
+        public String getMatchReason(Binding item) {
 
             return String.format("Binding has destination value of '%s'", destination);
         }
@@ -101,7 +101,7 @@ public class BindingMatchers {
         }
 
         @Override
-        public String getMatchReason(Binding item) {
+        public String getNotMatchReason(Binding item) {
 
             return String.format(
                     "Binding should have destination type of '%s' but actually has '%s' (e=exchange, q=queue).",
@@ -109,7 +109,7 @@ public class BindingMatchers {
         }
 
         @Override
-        public String getNotMatchReason(Binding item) {
+        public String getMatchReason(Binding item) {
 
             return String.format("Binding has destination type of '%s'.", destinationType);
         }
@@ -130,14 +130,14 @@ public class BindingMatchers {
         }
 
         @Override
-        public String getMatchReason(Binding item) {
+        public String getNotMatchReason(Binding item) {
 
             return String.format("Binding should have routing key '%s' but actually has '%s'.",
                     routingKey, item.getRoutingKey());
         }
 
         @Override
-        public String getNotMatchReason(Binding item) {
+        public String getMatchReason(Binding item) {
 
             return String.format("Binding has routing key value of '%s'.", routingKey);
         }

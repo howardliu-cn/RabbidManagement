@@ -23,16 +23,16 @@ public interface Matcher<T> {
     boolean matches(T item);
 
     /**
-     * Assuming that "matches(item) == true", tell us why it was true (e.g. same exchange name).
-     * @param item Item that matched.
-     * @return Reason why the item met the criteria.
-     */
-    String getMatchReason(T item);
-
-    /**
      * Assuming that "matchers(item) == false", tell us why it was false (e.g. not same exchange name).
      * @param item Item that did not match.
      * @return Reason why the item did not meet the criteria.
      */
     String getNotMatchReason(T item);
+
+    /**
+     * Assuming that "matches(item) == true", tell us why it was true (e.g. same exchange name).
+     * @param item Item that matched.
+     * @return Reason why the item met the criteria.
+     */
+    String getMatchReason(T item);
 }

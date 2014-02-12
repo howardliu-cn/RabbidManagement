@@ -54,14 +54,14 @@ public class MessageMatchers {
         }
 
         @Override
-        public String getMatchReason(ReceivedMessage item) {
+        public String getNotMatchReason(ReceivedMessage item) {
 
             return String.format("Message should have body '%s' but instead had '%s'.",
                     expectedBody, item.getPayload());
         }
 
         @Override
-        public String getNotMatchReason(ReceivedMessage item) {
+        public String getMatchReason(ReceivedMessage item) {
 
             return String.format("Message has body of '%s'.", expectedBody);
         }
@@ -81,14 +81,14 @@ public class MessageMatchers {
         }
 
         @Override
-        public String getMatchReason(ReceivedMessage item) {
+        public String getNotMatchReason(ReceivedMessage item) {
 
             return String.format("Message body bytes does not match (exp.len = %s, act.len = %s).",
                     expectedBody.length, item.getPayloadBytes().length);
         }
 
         @Override
-        public String getNotMatchReason(ReceivedMessage item) {
+        public String getMatchReason(ReceivedMessage item) {
 
             return String.format("Message body bytes matches (len = %s)", expectedBody.length);
         }
@@ -115,7 +115,7 @@ public class MessageMatchers {
         }
 
         @Override
-        public String getMatchReason(ReceivedMessage item) {
+        public String getNotMatchReason(ReceivedMessage item) {
 
             if (!item.getHeaders().containsKey(key))
                 return String.format("Message does not contain header: %s", key);
@@ -125,7 +125,7 @@ public class MessageMatchers {
         }
 
         @Override
-        public String getNotMatchReason(ReceivedMessage item) {
+        public String getMatchReason(ReceivedMessage item) {
 
             return String.format("Message header '%s' was found with value '%s'.", key, value);
         }
@@ -152,7 +152,7 @@ public class MessageMatchers {
         }
 
         @Override
-        public String getMatchReason(ReceivedMessage item) {
+        public String getNotMatchReason(ReceivedMessage item) {
 
             if (!item.getProperties().containsKey(key))
                 return String.format("Message does not contain property: %s", key);
@@ -162,7 +162,7 @@ public class MessageMatchers {
         }
 
         @Override
-        public String getNotMatchReason(ReceivedMessage item) {
+        public String getMatchReason(ReceivedMessage item) {
 
             return String.format("Message property '%s' was found with value '%s'.", key, value);
         }
@@ -183,13 +183,13 @@ public class MessageMatchers {
         }
 
         @Override
-        public String getMatchReason(ReceivedMessage item) {
+        public String getNotMatchReason(ReceivedMessage item) {
 
             return String.format("Message routing key should be '%s' but is '%s'.", routingKey, item.getRoutingKey());
         }
 
         @Override
-        public String getNotMatchReason(ReceivedMessage item) {
+        public String getMatchReason(ReceivedMessage item) {
 
             return String.format("Message routing key was '%s'.", routingKey);
         }
@@ -218,7 +218,7 @@ public class MessageMatchers {
         }
 
         @Override
-        public String getMatchReason(ReceivedMessage item) {
+        public String getNotMatchReason(ReceivedMessage item) {
 
             if (!item.getHeaders().containsKey(MARKER_KEY))
                 return "Message does not contain the message header marker.";
@@ -229,7 +229,7 @@ public class MessageMatchers {
         }
 
         @Override
-        public String getNotMatchReason(ReceivedMessage item) {
+        public String getMatchReason(ReceivedMessage item) {
 
             return String.format("Message had matching marker value of '%s'.", item.getHeaders().get(MARKER_KEY));
         }

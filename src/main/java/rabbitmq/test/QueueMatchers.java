@@ -46,14 +46,14 @@ public class QueueMatchers {
         }
 
         @Override
-        public String getMatchReason(Queue item) {
+        public String getNotMatchReason(Queue item) {
 
             return String.format("Queue '%s' should have '%s' messages but has '%s'.",
                     item.getName(), count, item.getMessages());
         }
 
         @Override
-        public String getNotMatchReason(Queue item) {
+        public String getMatchReason(Queue item) {
 
             return String.format("Queue '%s' has '%s' messages.", item.getName(), count);
         }
@@ -74,14 +74,14 @@ public class QueueMatchers {
         }
 
         @Override
-        public String getMatchReason(Queue item) {
+        public String getNotMatchReason(Queue item) {
 
             return String.format("Queue '%s' durable status should be '%s' but is not.",
                     item.getName(), shouldBeDurable);
         }
 
         @Override
-        public String getNotMatchReason(Queue item) {
+        public String getMatchReason(Queue item) {
 
             return String.format("Queue '%s' has durable status of '%s'.", item.getName(), shouldBeDurable);
         }
@@ -102,14 +102,14 @@ public class QueueMatchers {
         }
 
         @Override
-        public String getMatchReason(Queue item) {
+        public String getNotMatchReason(Queue item) {
 
             return String.format("Queue '%s' autodelete status should be '%s' but is not.",
                     item.getName(), shouldBeAutoDelete);
         }
 
         @Override
-        public String getNotMatchReason(Queue item) {
+        public String getMatchReason(Queue item) {
 
             return String.format("Queue '%s' has autodelete status of '%s'.", item.getName(), shouldBeAutoDelete);
         }

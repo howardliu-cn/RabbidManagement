@@ -14,6 +14,19 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 /**
+ * This is a tool to help developers using RabbitMQ make assertions about their current topology configuration.
+ *
+ * The assertion framework was created to support my work in verifying RabbitMQ deployments.  It allows us
+ * to write integration tests to verify an environment is correctly setup before it is rolled into production.
+ *
+ * The assertion framework is designed to do various things:
+ *
+ * 1.  Determine if topology items exist, or to verify they do not exist, in a RabbitMQ cluster.  You would
+ *     most likely use this to verify exchanges or queues exist, or that bindings between them are intact.
+ * 2.  Verify that complex routing scenarios actually allow messages to be delivered to the correct queues
+ *     instead of being dropped or delivered to unintended recipients.  This is a really important use case
+ *     for us because of the complex topologies we support.
+ *
  * @author Richard Clayton (Berico Technologies)
  */
 public class RabbitAssert {
@@ -205,7 +218,7 @@ public class RabbitAssert {
 
             for (String notExpectedTag : notExpectedTags)
                 assertFalse(
-                        String.format("User '%s' has tag '%s' and should not.", notExpectedTag),
+                        String.format("User '%s' has tag '%s' and should not.", username, notExpectedTag),
                         tagList.contains(notExpectedTag));
         }
 
@@ -290,8 +303,8 @@ public class RabbitAssert {
                 user, permissionExpression, vhost),
                 permission.isPresent());
 
-        String actualPermission = null;
-        String permissionTypeDescription = null;
+        String actualPermission;
+        String permissionTypeDescription;
 
         switch (permissionType){
             case 1:
@@ -473,7 +486,7 @@ public class RabbitAssert {
 
         if (matchers != null && matchers.length > 0) {
 
-            MatchResult result = hasMatch(bindings.get(), matchers);
+            MatchResult result = hasItemThatMatches(bindings.get(), matchers);
 
             assertTrue(result.getReason(), result.isMatch());
         }
@@ -517,7 +530,7 @@ public class RabbitAssert {
 
         if (matchers != null && matchers.length > 0) {
 
-            MatchResult result = hasMatch(bindings.get(), matchers);
+            MatchResult result = hasItemThatMatches(bindings.get(), matchers);
 
             assertTrue(result.getReason(), result.isMatch());
         }
@@ -553,7 +566,7 @@ public class RabbitAssert {
 
             if (matchers != null && matchers.length > 0) {
 
-                MatchResult result = doesNotHaveMatch(bindings.get(), matchers);
+                MatchResult result = doesNotHaveItemThatMatches(bindings.get(), matchers);
 
                 assertFalse(result.getReason(), result.isMatch());
             }
@@ -597,7 +610,7 @@ public class RabbitAssert {
 
             if (matchers != null && matchers.length > 0) {
 
-                MatchResult result = doesNotHaveMatch(bindings.get(), matchers);
+                MatchResult result = doesNotHaveItemThatMatches(bindings.get(), matchers);
 
                 assertFalse(result.getReason(), result.isMatch());
             }
@@ -655,7 +668,7 @@ public class RabbitAssert {
                 String.format("Queue '%s' on vhost '%s' does not have any messages.", queueName, vhost),
                 messages.get().size() > 0);
 
-        MatchResult result = hasMatch(messages.get(), matchers);
+        MatchResult result = hasItemThatMatches(messages.get(), matchers);
 
         assertTrue(result.getReason(), result.isMatch());
 
@@ -700,7 +713,7 @@ public class RabbitAssert {
 
         if (messages.isPresent() && messages.get().size() > 0) {
 
-            MatchResult result = doesNotHaveMatch(messages.get(), matchers);
+            MatchResult result = doesNotHaveItemThatMatches(messages.get(), matchers);
 
             assertFalse(result.getReason(), result.isMatch());
         }
@@ -727,18 +740,18 @@ public class RabbitAssert {
         return new DeliveryVerification(matchers);
     }
 
-    private static List<String> splitTags(String tagCsv){
+    /**
+     * Given a collection of items and criteria for matching, determine if there is a match, and
+     * if there isn't, explain why.
+     * @param items Items to interrogate.
+     * @param matchers Criteria for matching.
+     * @param <T> Type to match.
+     * @return MatchResult with the aggregated results of not matching.
+     */
+    static <T> MatchResult hasItemThatMatches(Collection<T> items, Matcher<T>[] matchers){
 
-        Iterable<String> tags = Splitter.on(",").trimResults().split(tagCsv);
-
-        ArrayList<String> tagList = Lists.newArrayList();
-
-        Iterables.addAll(tagList, tags);
-
-        return tagList;
-    }
-
-    private static <T> MatchResult hasMatch(Collection<T> items, Matcher<T>[] matchers){
+        Preconditions.checkNotNull(items);
+        Preconditions.checkNotNull(matchers);
 
         List<String> reasons = Lists.newArrayList();
 
@@ -756,10 +769,21 @@ public class RabbitAssert {
             }
         }
 
-        return MatchResult.doesNotMatch(Joiner.on("\n").join(reasons));
+        return MatchResult.doesNotMatch(formatReasons(reasons));
     }
 
-    private static <T> MatchResult doesNotHaveMatch(Collection<T> items, Matcher<T>[] matchers){
+    /**
+     * Given a collection of items and criteria for matching, determine if there is a not a match, and
+     * if there is, explain why.
+     * @param items Items to interrogate.
+     * @param matchers Criteria for matching.
+     * @param <T> Type to match.
+     * @return MatchResult with the aggregated results of matching.
+     */
+    static <T> MatchResult doesNotHaveItemThatMatches(Collection<T> items, Matcher<T>[] matchers){
+
+        Preconditions.checkNotNull(items);
+        Preconditions.checkNotNull(matchers);
 
         List<String> reasons = Lists.newArrayList();
 
@@ -775,23 +799,43 @@ public class RabbitAssert {
 
         if (reasons.size() == 0) return MatchResult.doesNotMatch();
 
-        return MatchResult.hasMatch(Joiner.on("\n").join(reasons));
+        return MatchResult.hasMatch(formatReasons(reasons));
     }
 
-    private static <T> MatchResult isMatch(T item, Matcher<T>[] matchers){
+    /**
+     * Match strategy assumes ALL matchers MATCH in order for MatchResult.isMatch() to be true.
+     * @param item Item to interrogate.
+     * @param matchers Array of matchers that perform the evaluation.
+     * @param <T> Type of the Item.
+     * @return The results of the interrogation.
+     */
+    static <T> MatchResult isMatch(T item, Matcher<T>[] matchers){
+
+        Preconditions.checkNotNull(item);
+        Preconditions.checkNotNull(matchers);
 
         for(Matcher<T> matcher : matchers){
 
             if (!matcher.matches(item)) {
 
-                return MatchResult.doesNotMatch(matcher.getMatchReason(item));
+                return MatchResult.doesNotMatch(matcher.getNotMatchReason(item));
             }
         }
 
         return MatchResult.hasMatch();
     }
 
-    private static <T> MatchResult doesNotMatch(T item, Matcher<T>[] matchers){
+    /**
+     * Match strategy assumes that if ANY matchers DO NOT MATCH, MatchResult.isMatch() will be false.
+     * @param item Item to interrogate.
+     * @param matchers Array of matchers that perform the evaluation.
+     * @param <T> Type of the Item.
+     * @return The results of the interrogation.
+     */
+    static <T> MatchResult doesNotMatch(T item, Matcher<T>[] matchers){
+
+        Preconditions.checkNotNull(item);
+        Preconditions.checkNotNull(matchers);
 
         List<String> matchReasons = Lists.newArrayList();
 
@@ -799,14 +843,40 @@ public class RabbitAssert {
 
             if (matcher.matches(item)){
 
-                matchReasons.add(matcher.getNotMatchReason(item));
+                matchReasons.add(matcher.getMatchReason(item));
             }
             else {
 
-                MatchResult.doesNotMatch();
+                return MatchResult.doesNotMatch();
             }
         }
-        return MatchResult.hasMatch(Joiner.on("\n").join(matchReasons));
+        return MatchResult.hasMatch(formatReasons(matchReasons));
+    }
+
+    /**
+     * Utility for formatting a set of reasons for match success or failure.
+     * @param reasons Collection of reasons.
+     * @return Formatted string of reasons.
+     */
+    static String formatReasons(Collection<String> reasons){
+
+        return String.format("[ %s ]", Joiner.on(" | ").join(reasons));
+    }
+
+    /**
+     * Splits a CSV string used by RabbitMQ for User "tags" into a collection of individual string tags.
+     * @param tagCsv Tag string, comma separated.
+     * @return List of string tags.
+     */
+    static List<String> splitTags(String tagCsv){
+
+        Iterable<String> tags = Splitter.on(",").trimResults().split(tagCsv);
+
+        ArrayList<String> tagList = Lists.newArrayList();
+
+        Iterables.addAll(tagList, tags);
+
+        return tagList;
     }
 
     public static class MatchResult {

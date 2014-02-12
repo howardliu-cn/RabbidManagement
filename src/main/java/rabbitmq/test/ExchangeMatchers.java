@@ -8,6 +8,11 @@ import rabbitmq.mgmt.model.Queue;
  */
 public class ExchangeMatchers {
 
+    public static ExchangeNameMatcher hasExName(String name){
+
+        return new ExchangeNameMatcher(name);
+    }
+
     public static ExchangeTypeMatcher isTopicType(){
 
         return new ExchangeTypeMatcher("topic");
@@ -53,6 +58,33 @@ public class ExchangeMatchers {
         return new AutoDeleteMatcher(false);
     }
 
+    public static class ExchangeNameMatcher implements ExchangeMatcher {
+
+        private String exchangeName;
+
+        public ExchangeNameMatcher(String exchangeName) {
+            this.exchangeName = exchangeName;
+        }
+
+        @Override
+        public boolean matches(Exchange item) {
+
+            return exchangeName.equals(item.getName());
+        }
+
+        @Override
+        public String getNotMatchReason(Exchange item) {
+
+            return String.format("Exchange should have name '%s' but instead has '%s'.", exchangeName, item.getName());
+        }
+
+        @Override
+        public String getMatchReason(Exchange item) {
+
+            return String.format("Exchange has name '%s'.", exchangeName);
+        }
+    }
+
     public static class ExchangeTypeMatcher implements ExchangeMatcher {
 
         private String exchangeType;
@@ -67,14 +99,14 @@ public class ExchangeMatchers {
         }
 
         @Override
-        public String getMatchReason(Exchange item) {
+        public String getNotMatchReason(Exchange item) {
 
             return String.format("Exchange '%s' should be type '%s' but actually is '%s'.",
                     item.getName(), exchangeType, item.getType());
         }
 
         @Override
-        public String getNotMatchReason(Exchange item) {
+        public String getMatchReason(Exchange item) {
 
             return String.format("Exchange '%s' is of type '%s'", item.getName(), exchangeType);
         }
@@ -95,14 +127,14 @@ public class ExchangeMatchers {
         }
 
         @Override
-        public String getMatchReason(Exchange item) {
+        public String getNotMatchReason(Exchange item) {
 
             return String.format("Exchange '%s' durable status should be '%s' but is not.",
                     item.getName(), shouldBeDurable);
         }
 
         @Override
-        public String getNotMatchReason(Exchange item) {
+        public String getMatchReason(Exchange item) {
 
             return String.format("Exchange '%s' has durable status of '%s'.", item.getName(), shouldBeDurable);
         }
@@ -123,14 +155,14 @@ public class ExchangeMatchers {
         }
 
         @Override
-        public String getMatchReason(Exchange item) {
+        public String getNotMatchReason(Exchange item) {
 
             return String.format("Exchange '%s' autodelete status should be '%s' but is not.",
                     item.getName(), shouldBeAutoDelete);
         }
 
         @Override
-        public String getNotMatchReason(Exchange item) {
+        public String getMatchReason(Exchange item) {
 
             return String.format("Exchange '%s' has autodelete status of '%s'.", item.getName(), shouldBeAutoDelete);
         }

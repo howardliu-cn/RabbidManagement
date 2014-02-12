@@ -41,13 +41,13 @@ public class NodeMatchers {
         }
 
         @Override
-        public String getMatchReason(Node item) {
+        public String getNotMatchReason(Node item) {
             return String.format("Node '%s' is of type '%s' and not expected type of '%s'.",
                     item.getName(), item.getType(), nodeType);
         }
 
         @Override
-        public String getNotMatchReason(Node item) {
+        public String getMatchReason(Node item) {
 
             return String.format("Node '%s' is of type '%s'.", item.getName(), nodeType);
         }
@@ -67,14 +67,14 @@ public class NodeMatchers {
         }
 
         @Override
-        public String getMatchReason(Node item) {
+        public String getNotMatchReason(Node item) {
 
             return String.format("Node '%s' running status should be '%s' but is not.",
                     item.getName(), shouldBeRunning);
         }
 
         @Override
-        public String getNotMatchReason(Node item) {
+        public String getMatchReason(Node item) {
 
             return String.format("Node '%s' has running status of '%s'.", item.getName(), shouldBeRunning);
         }

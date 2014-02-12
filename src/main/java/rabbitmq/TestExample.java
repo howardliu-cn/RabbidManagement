@@ -15,7 +15,7 @@ import static rabbitmq.test.BindingMatchers.*;
 /**
  * @author Richard Clayton (Berico Technologies)
  */
-@Ignore("Just an example.  Assumes you have an RabbitMQ Mgmt Console at localhost:15672")
+//@Ignore("Just an example.  Assumes you have an RabbitMQ Mgmt Console at localhost:15672")
 public class TestExample {
 
     static RabbitMgmtService mgmt;

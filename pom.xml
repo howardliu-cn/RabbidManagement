@@ -5,11 +5,11 @@
 
 	<groupId>rabbitmq</groupId>
 	<artifactId>mgmt</artifactId>
-	<version>3.5.0</version>
+	<version>3.5.1</version>
 	<packaging>jar</packaging>
 
 	<name>RabbitMQ Management</name>
-	<url>http://github.com/Berico-Technologies/RabbitMQ-Management-Java</url>
+	<url>http://github.com/Berico-Technologies/RabbidManagement</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -54,7 +54,6 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>1.0.10</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -65,12 +64,6 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<version>1.9.5</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.berico</groupId>
-			<artifactId>test-utils</artifactId>
-			<version>1.0.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -129,6 +122,30 @@
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
