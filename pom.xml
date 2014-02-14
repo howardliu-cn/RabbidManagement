@@ -5,7 +5,7 @@
 
 	<groupId>rabbitmq</groupId>
 	<artifactId>mgmt</artifactId>
-	<version>3.5.1</version>
+	<version>3.5.2</version>
 	<packaging>jar</packaging>
 
 	<name>RabbitMQ Management</name>
@@ -96,6 +96,11 @@
             <artifactId>guava</artifactId>
             <version>16.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.berico.utils</groupId>
+            <artifactId>test-junit</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 	
 	<distributionManagement>
@@ -122,6 +127,19 @@
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.16</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

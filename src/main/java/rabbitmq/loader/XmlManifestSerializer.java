@@ -20,6 +20,21 @@ public class XmlManifestSerializer implements ManifestSerializer {
         xstream.alias("connection", ConnectionInfo.class);
         xstream.alias("vhost", VirtualHost.class);
         xstream.alias("permission", Permission.class);
+
+        xstream.omitField(Queue.class, "memory");
+        xstream.omitField(Queue.class, "idle_since");
+        xstream.omitField(Queue.class, "policy");
+        xstream.omitField(Queue.class, "exclusive_consumer_tag");
+        xstream.omitField(Queue.class, "messages_ready");
+        xstream.omitField(Queue.class, "messages_unacknowledged");
+        xstream.omitField(Queue.class, "messages");
+        xstream.omitField(Queue.class, "consumers");
+        xstream.omitField(Queue.class, "active_consumers");
+        xstream.omitField(Queue.class, "backing_queue_status");
+        xstream.omitField(Queue.class, "node");
+        xstream.omitField(Queue.class, "messages_details");
+        xstream.omitField(Queue.class, "messages_ready_details");
+        xstream.omitField(Queue.class, "messages_unacknowledged_details");
     }
 
     @Override

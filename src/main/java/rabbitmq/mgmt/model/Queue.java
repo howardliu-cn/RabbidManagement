@@ -11,33 +11,33 @@ import java.util.Map;
 public class Queue {
 
     @ProducedByRabbit
-	protected transient long memory;
+	protected long memory;
     @ProducedByRabbit
-	protected transient String idle_since;
+	protected String idle_since;
     @ProducedByRabbit
-	protected transient String policy;
+	protected String policy;
     @ProducedByRabbit
-	protected transient String exclusive_consumer_tag;
+	protected String exclusive_consumer_tag;
     @ProducedByRabbit
-	protected transient long messages_ready;
+	protected long messages_ready;
     @ProducedByRabbit
-	protected transient long messages_unacknowledged;
+	protected long messages_unacknowledged;
     @ProducedByRabbit
-	protected transient long messages;
+	protected long messages;
     @ProducedByRabbit
-	protected transient int consumers;
+	protected int consumers;
     @ProducedByRabbit
-	protected transient int active_consumers;
+	protected int active_consumers;
     @ProducedByRabbit
-	protected transient BackingQueueStatus backing_queue_status;
+	protected BackingQueueStatus backing_queue_status;
     @ProducedByRabbit
-    protected transient String node;
+    protected String node;
     @ProducedByRabbit
-    protected transient MessageDetails messages_details;
+    protected MessageDetails messages_details;
     @ProducedByRabbit
-    protected transient MessageDetails messages_ready_details;
+    protected MessageDetails messages_ready_details;
     @ProducedByRabbit
-    protected transient MessageDetails messages_unacknowledged_details;
+    protected MessageDetails messages_unacknowledged_details;
 
 	protected String name;
 	protected String vhost = "/";

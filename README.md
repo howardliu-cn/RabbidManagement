@@ -11,6 +11,10 @@ The library was developed in support of our AMPere project (http://github.com/Be
 
 > Note about versions.  This library was originally keeping in sync with the AMPere project (so it started it's life at 3.1.0.  I'm going to break with tradition an let it version as needed.  Sorry for any confusion.
 
+**v3.5.2**
+
+- Removed "transient" from fields in the `Queue` class which caused GSon to ignore properties coming back from RabbitMQ.  This fixes Github issue #1.
+
 **v3.5.1**
 
 - Fixed bugs in the assertion framework.
