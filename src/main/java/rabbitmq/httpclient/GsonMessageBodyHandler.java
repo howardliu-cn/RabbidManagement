@@ -66,7 +66,7 @@ public final class GsonMessageBodyHandler implements MessageBodyWriter<Object>, 
         
         try {
         	
-        		outputStreamWriter = new OutputStreamWriter(entityStream, CHARSET);
+        	outputStreamWriter = new OutputStreamWriter(entityStream, CHARSET);
         	
             Type jsonType = getAppropriateType(type, genericType);
 
