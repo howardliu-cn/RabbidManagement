@@ -1,0 +1,12 @@
+language: java
+addons:
+  hosts:
+    - rabbit
+    - hare
+install:
+    - rabbitmq-plugins enable rabbitmq_management
+    - rabbitmq-plugins enable rabbitmq_federation
+    - rabbitmq-plugins enable rabbitmq_federation_management
+before_script:
+    - RABBITMQ_NODE_PORT=5673 RABBITMQ_SERVER_START_ARGS="-rabbitmq_management listener [{port,15673}]" RABBITMQ_NODENAME=hare rabbitmq-server -detached
+script: run_integration_tests.sh
