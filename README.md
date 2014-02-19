@@ -1,6 +1,8 @@
 Rabbid Management
 ========================
 
+[![Build Status](https://travis-ci.org/Berico-Technologies/RabbidManagement.png)](https://travis-ci.org/Berico-Technologies/RabbidManagement)
+
 Formerly known as RabbitMQ-Management-Java.  This is a utility library for managing and testing the state of a RabbitMQ node/cluster via the RabbitMQ Management Console.  In many cases, it's simply a fluent Java API for the console.  The library also includes a built-in Assertion library for writing integration tests against RabbitMQ, as well as, loader and persistence mechanism for topology configuration.
 
 The library was developed in support of our AMPere project (http://github.com/Berico-Technologies/AMP), but maintains no ties to the project so it can be used independently by other developers or frameworks.
@@ -10,6 +12,12 @@ The library was developed in support of our AMPere project (http://github.com/Be
 ## Changelog
 
 > Note about versions.  This library was originally keeping in sync with the AMPere project (so it started it's life at 3.1.0.  I'm going to break with tradition an let it version as needed.  Sorry for any confusion.
+
+**v3.6.0**
+
+- Adding support for configuring federation under the `rabbitMgmtService.federate()` fluent.
+- Added an `AmqpUri` builder to help with creating AMQP URI strings (needed for federation).
+- Removed `Optional` from retrieving all exchanges (which was nonsense because you should always have some entries or the HTTP connection fails).
 
 **v3.5.2**
 

@@ -29,22 +29,22 @@ public class ExchangeOperations extends BaseFluent {
 	 * of the virtual host.
 	 * @return Collection of Exchanges
 	 */
-	public Optional<Collection<Exchange>> all(){
+	public Collection<Exchange> all(){
 		
 		logger.debug("Getting all exchanges on every vhost.");
 		
-		return HTTP.GET("/exchanges", EXCHANGE_COLLECTION);
+		return HTTP.GET("/exchanges", EXCHANGE_COLLECTION).get();
 	}
 	
 	/**
 	 * Get all exchanges on the default vhost: "/".
 	 * @return Collection of Exchanges
 	 */
-	public Optional<Collection<Exchange>> allOnDefault(){
+	public Collection<Exchange> allOnDefault(){
 		
 		logger.debug("Getting exchanges at from the default vhost.");
 		
-		return allOnVHost("/");
+		return allOnVHost("/").get();
 	}
 	
 	/**
@@ -187,6 +187,4 @@ public class ExchangeOperations extends BaseFluent {
 			String.format("/exchanges/%s/%s/bindings/%s", 
 				encodeSlashes(vhost), exchangeName, direction), BINDING_COLLECTION);
 	}
-	
-	
 }
