@@ -10,6 +10,7 @@ import rabbitmq.mgmt.model.*;
 
 
 import com.sun.jersey.api.client.GenericType;
+import rabbitmq.mgmt.model.federation.FederationLink;
 
 public class BaseFluent {
 
@@ -27,7 +28,6 @@ public class BaseFluent {
 	static final GenericType<Queue> QUEUE = new GenericType<Queue>(){};
 	static final GenericType<Collection<Queue>> QUEUE_COLLECTION = new GenericType<Collection<Queue>>(){};
 
-
     static final GenericType<PublishResponse> PUBLISH_RESPONSE = new GenericType<PublishResponse>(){};
 
     static final GenericType<ReceivedMessage> MESSAGE = new GenericType<ReceivedMessage>(){};
@@ -44,6 +44,15 @@ public class BaseFluent {
 	
 	static final GenericType<Node> NODE = new GenericType<Node>(){};
 	static final GenericType<Collection<Node>> NODE_COLLECTION = new GenericType<Collection<Node>>(){};
+
+    static final GenericType<Parameter> PARAMETER = new GenericType<Parameter>(){};
+    static final GenericType<Collection<Parameter>> PARAMETER_COLLECTION = new GenericType<Collection<Parameter>>(){};
+
+    static final GenericType<Policy> POLICY = new GenericType<Policy>(){};
+    static final GenericType<Collection<Policy>> POLICY_COLLECTION = new GenericType<Collection<Policy>>(){};
+
+    static final GenericType<FederationLink> FEDERATION_LINK = new GenericType<FederationLink>(){};
+    static final GenericType<Collection<FederationLink>> FEDERATION_LINK_COLLECTION = new GenericType<Collection<FederationLink>>(){};
 	
 	HttpContext HTTP;
 	RabbitMgmtService mgmtService;
