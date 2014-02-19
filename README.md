@@ -18,6 +18,7 @@ The library was developed in support of our AMPere project (http://github.com/Be
 - Adding support for configuring federation under the `rabbitMgmtService.federate()` fluent.
 - Added an `AmqpUri` builder to help with creating AMQP URI strings (needed for federation).
 - Removed `Optional` from retrieving all exchanges (which was nonsense because you should always have some entries or the HTTP connection fails).
+- Added support for Travis CI builds to run Integration Tests.
 
 **v3.5.2**
 
