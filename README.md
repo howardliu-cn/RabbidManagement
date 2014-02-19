@@ -1,6 +1,8 @@
 Rabbid Management
 ========================
 
+[![Build Status](https://travis-ci.org/Berico-Technologies/RabbidManagement.png)](https://travis-ci.org/Berico-Technologies/RabbidManagement)
+
 Formerly known as RabbitMQ-Management-Java.  This is a utility library for managing and testing the state of a RabbitMQ node/cluster via the RabbitMQ Management Console.  In many cases, it's simply a fluent Java API for the console.  The library also includes a built-in Assertion library for writing integration tests against RabbitMQ, as well as, loader and persistence mechanism for topology configuration.
 
 The library was developed in support of our AMPere project (http://github.com/Berico-Technologies/AMP), but maintains no ties to the project so it can be used independently by other developers or frameworks.
