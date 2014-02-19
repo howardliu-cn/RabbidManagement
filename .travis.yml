@@ -9,7 +9,7 @@ install:
     - sudo rabbitmq-plugins enable rabbitmq_management
     - sudo rabbitmq-plugins enable rabbitmq_federation
     - sudo rabbitmq-plugins enable rabbitmq_federation_management
-    - 
+    - sudo service rabbitmq-server restart
 before_script:
-    - RABBITMQ_NODE_PORT=5673 RABBITMQ_SERVER_START_ARGS="-rabbitmq_management listener [{port,15673}]" RABBITMQ_NODENAME=hare rabbitmq-server -detached
+    - sudo RABBITMQ_NODE_PORT=5673 RABBITMQ_SERVER_START_ARGS="-rabbitmq_management listener [{port,15673}]" RABBITMQ_NODENAME=hare rabbitmq-server -detached
 script: ./run_integration_tests.sh
