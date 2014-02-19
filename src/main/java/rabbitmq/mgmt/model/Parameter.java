@@ -47,4 +47,44 @@ public class Parameter<T> {
     public void setName(String name) {
         this.name = name;
     }
+
+    public static Builder builder(){ return new Builder(); }
+
+    public static class Builder {
+
+        Parameters.ObjectParameter parameter = new Parameters.ObjectParameter();
+
+        public Builder name(String parameterName){
+
+            parameter.setName(parameterName);
+
+            return this;
+        }
+
+        public Builder vhost(String vhost){
+
+            parameter.setVhost(vhost);
+
+            return this;
+        }
+
+        public Builder component(String component){
+
+            parameter.setComponent(component);
+
+            return this;
+        }
+
+        public Builder value(Object value){
+
+            parameter.setValue(value);
+
+            return this;
+        }
+
+        public Parameter build(){
+
+            return parameter;
+        }
+    }
 }
