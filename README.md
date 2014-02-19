@@ -11,6 +11,12 @@ The library was developed in support of our AMPere project (http://github.com/Be
 
 > Note about versions.  This library was originally keeping in sync with the AMPere project (so it started it's life at 3.1.0.  I'm going to break with tradition an let it version as needed.  Sorry for any confusion.
 
+**v3.6.0**
+
+- Adding support for configuring federation under the `rabbitMgmtService.federate()` fluent.
+- Added an `AmqpUri` builder to help with creating AMQP URI strings (needed for federation).
+- Removed `Optional` from retrieving all exchanges (which was nonsense because you should always have some entries or the HTTP connection fails).
+
 **v3.5.2**
 
 - Removed "transient" from fields in the `Queue` class which caused GSon to ignore properties coming back from RabbitMQ.  This fixes Github issue #1.

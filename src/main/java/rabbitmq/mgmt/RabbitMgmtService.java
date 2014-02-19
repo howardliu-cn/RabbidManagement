@@ -191,6 +191,28 @@ public class RabbitMgmtService {
         return new BindingOperations(httpContext, this);
 	}
 
+    /**
+     * Get operations related to parameters.
+     * @return Parameter Operations.
+     */
+    public ParameterOperations parameters(){
+
+        checkInitialize();
+
+        return new ParameterOperations(httpContext, this);
+    }
+
+    /**
+     * Get operations related to federating AMQP exchanges and queues between brokers/clusters.
+     * @return Federation Operations
+     */
+    public FederationOperations federation(){
+
+        checkInitialize();
+
+        return new FederationOperations(httpContext, this);
+    }
+
     private void checkInitialize(){
 
         if (httpContext == null) initialize();
@@ -198,7 +220,7 @@ public class RabbitMgmtService {
 
     /**
      * Get a builder for the RabbitMgmtService, which can be a little tedious to configure via constructor.
-     * @return Builder instance.
+     * @return AmqpUri instance.
      */
     public static Builder builder(){ return new Builder(); }
 

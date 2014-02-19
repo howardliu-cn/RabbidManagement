@@ -1,8 +1,11 @@
 package rabbitmq.httpclient;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rabbitmq.httpclient.deserializers.ParameterDeserializer;
+import rabbitmq.mgmt.model.Parameter;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -29,7 +32,16 @@ public final class GsonMessageBodyHandler implements MessageBodyWriter<Object>, 
     private Gson gson;
 
     private Gson getGson() {
-        if (gson == null) { gson = new Gson(); }
+
+        if (gson == null) {
+
+            GsonBuilder builder = new GsonBuilder();
+
+            builder.registerTypeAdapter(Parameter.class, new ParameterDeserializer());
+
+            gson = builder.create();
+
+        }
 
         return gson;
     }

@@ -4,7 +4,7 @@
   <groupId>rabbitmq</groupId>
   <artifactId>mgmt</artifactId>
   <name>RabbitMQ Management</name>
-  <version>3.5.1</version>
+  <version>3.6.0</version>
   <url>http://github.com/Berico-Technologies/RabbidManagement</url>
   <build>
     <plugins>

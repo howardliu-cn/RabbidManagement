@@ -5,6 +5,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import rabbitmq.mgmt.RabbitMgmtService;
 import rabbitmq.mgmt.model.*;
+import rabbitmq.mgmt.model.federation.FederationLink;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -413,7 +414,7 @@ public class RabbitAssert {
         Optional<Queue> queue = mgmt.queues().get(vhost, queueName);
 
         assertTrue(
-             String.format("Queue '%s' does not exist and should on vhost '%s'.", queueName, vhost), queue.isPresent());
+                String.format("Queue '%s' does not exist and should on vhost '%s'.", queueName, vhost), queue.isPresent());
 
         if (matchers != null && matchers.length > 0) {
 
@@ -446,7 +447,7 @@ public class RabbitAssert {
         Optional<Queue> queue = mgmt.queues().get(vhost, queueName);
 
         assertFalse(
-             String.format("Queue '%s' does not exist and should on vhost '%s'.", queueName, vhost), queue.isPresent());
+                String.format("Queue '%s' does not exist and should on vhost '%s'.", queueName, vhost), queue.isPresent());
 
         return this;
     }
@@ -476,7 +477,7 @@ public class RabbitAssert {
         Optional<Collection<Binding>> bindings = mgmt.bindings().getEtoQ(vhost, exchange, queue);
 
         assertTrue(
-                String.format("No E->Q binding found for '%s' and '%s' on vhost '%s'",                        exchange, queue, vhost), 
+                String.format("No E->Q binding found for '%s' and '%s' on vhost '%s'", exchange, queue, vhost),
                 bindings.isPresent());
 
         assertTrue(
@@ -627,7 +628,7 @@ public class RabbitAssert {
     /**
      * Assert that the specified Queue has a message matching the supplied matcher query.
      * @param queueName Name of the Queue.
-     * @param matchers Criteria for match the message.
+     * @param matchers Criteria for matching the message.
      * @return this.
      */
     public RabbitAssert hasMessage(String queueName, MessageMatcher... matchers){
@@ -638,7 +639,7 @@ public class RabbitAssert {
     /**
      * Assert that the specified Queue has a message matching the supplied matcher query.
      * @param queue Queue.
-     * @param matchers Criteria for match the message.
+     * @param matchers Criteria for matching the message.
      * @return this.
      */
     public RabbitAssert hasMessage(Queue queue, MessageMatcher... matchers){
@@ -650,7 +651,7 @@ public class RabbitAssert {
      * Assert that the specified Queue has a message matching the supplied criteria.
      * @param vhost Name of the vhost with the queue.
      * @param queueName Name of the Queue.
-     * @param matchers Criteria for match the message.
+     * @param matchers Criteria for matching the message.
      * @return this.
      */
     public RabbitAssert hasMessage(String vhost, String queueName, MessageMatcher... matchers){
@@ -678,7 +679,7 @@ public class RabbitAssert {
     /**
      * Assert that the specified Queue does not have the message matching the supplied criteria.
      * @param queue Queue.
-     * @param matchers Criteria for match the message.
+     * @param matchers Criteria for matching the message.
      * @return this.
      */
     public RabbitAssert doesNotHaveMessage(Queue queue, MessageMatcher... matchers){
@@ -689,7 +690,7 @@ public class RabbitAssert {
     /**
      * Assert that the specified Queue does not have the message matching the supplied criteria.
      * @param queueName Name of the Queue..
-     * @param matchers Criteria for match the message.
+     * @param matchers Criteria for matching the message.
      * @return this.
      */
     public RabbitAssert doesNotHaveMessage(String queueName, MessageMatcher... matchers){
@@ -701,7 +702,7 @@ public class RabbitAssert {
      * Assert that the specified Queue does not have the message matching the supplied criteria.
      * @param vhost Name of the vhost with the queue.
      * @param queueName Name of the Queue.
-     * @param matchers Criteria for match the message.
+     * @param matchers Criteria for matching the message.
      * @return this.
      */
     public RabbitAssert doesNotHaveMessage(String vhost, String queueName, MessageMatcher... matchers){
@@ -717,6 +718,42 @@ public class RabbitAssert {
 
             assertFalse(result.getReason(), result.isMatch());
         }
+
+        return this;
+    }
+
+    /**
+     * Assert that the target broker/cluster has a federation link that matches the supplied criteria.
+     * @param matchers Criteria for matching the link.
+     * @return this.
+     */
+    public RabbitAssert hasFederationLink(FederationLinkMatcher... matchers){
+
+        Preconditions.checkNotNull(matchers);
+
+        Collection<FederationLink> links = mgmt.federation().links();
+
+        MatchResult result = hasItemThatMatches(links, matchers);
+
+        assertTrue(result.getReason(), result.isMatch());
+
+        return this;
+    }
+    
+    /**
+     sert that the target broker/cluster does not have a federation link that matches the supplied criteria.
+     * @param matchers Criteria for matching the link.
+     * @return this.
+     */
+    public RabbitAssert doesNotHaveFederationLink(FederationLinkMatcher... matchers){
+
+        Preconditions.checkNotNull(matchers);
+
+        Collection<FederationLink> links = mgmt.federation().links();
+
+        MatchResult result = doesNotHaveItemThatMatches(links, matchers);
+
+        assertFalse(result.getReason(), result.isMatch());
 
         return this;
     }
