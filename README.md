@@ -13,6 +13,14 @@ The library was developed in support of our AMPere project (http://github.com/Be
 
 > Note about versions.  This library was originally keeping in sync with the AMPere project (so it started it's life at 3.1.0.  I'm going to break with tradition an let it version as needed.  Sorry for any confusion.
 
+**v3.6.2**
+
+- Removed Maven Shade plugin.  The intent of the plugin was to provide a portable means of using the library.  I'm moving this out to the RabbidShell project which will use the Scala REPL and perform all of the bundling via SBT.
+
+**v3.6.1**
+
+- Fixed integration tests.
+
 **v3.6.0**
 
 - Adding support for configuring federation under the `rabbitMgmtService.federate()` fluent.
