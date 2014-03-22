@@ -5,7 +5,7 @@
 
 	<groupId>rabbitmq</groupId>
 	<artifactId>mgmt</artifactId>
-	<version>3.6.2</version>
+	<version>3.7.0</version>
 	<packaging>jar</packaging>
 
 	<name>RabbitMQ Management</name>
@@ -100,6 +100,16 @@
             <groupId>com.berico.utils</groupId>
             <artifactId>test-junit</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava-annotations</artifactId>
+            <version>r03</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>14.0.1</version>
         </dependency>
     </dependencies>
 	

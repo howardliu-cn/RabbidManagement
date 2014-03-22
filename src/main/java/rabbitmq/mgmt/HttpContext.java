@@ -2,6 +2,7 @@ package rabbitmq.mgmt;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 
@@ -87,6 +88,20 @@ public class HttpContext {
 		
 		return makeGetRequest(uri, returnType);
 	}
+
+    /**
+     * Execute a GET call against the partial URL and deserialize the results.
+     * @param partialUrl Partial URL to build
+     * @param returnType Expected Return type.
+     * @param headers Headers to add to the request.
+     * @return Your desired return type.
+     */
+    public <T> Optional<T> GET(String partialUrl, Map<String, Object> headers, GenericType<T> returnType){
+
+        URI uri = buildUri(partialUrl);
+
+        return makeGetRequest(uri, headers, returnType);
+    }
 	
 	/**
 	 * Execute a PUT call against the partial URL.
@@ -99,7 +114,19 @@ public class HttpContext {
 		
 		makePutRequest(uri, payload);
 	}
-	
+
+    /**
+     * Execute a PUT call against the partial URL.
+     * @param partialUrl Partial URL to build.
+     * @param payload Object to PUT
+     */
+    public void PUT(String partialUrl, Map<String, Object> headers, Object payload){
+
+        URI uri = buildUri(partialUrl);
+
+        makePutRequest(uri, headers, payload);
+    }
+
 	/**
 	 * Execute a POST call against the partial URL.
 	 * @param partialUrl Partial URL to build.
@@ -116,6 +143,18 @@ public class HttpContext {
      * Execute a POST call against the partial URL.
      * @param partialUrl Partial URL to build.
      * @param payload Object to POST.
+     */
+    public void POST(String partialUrl, Map<String, Object> headers, Object payload){
+
+        URI uri = buildUri(partialUrl);
+
+        makePostRequest(uri, headers, payload);
+    }
+
+    /**
+     * Execute a POST call against the partial URL.
+     * @param partialUrl Partial URL to build.
+     * @param payload Object to POST.
      * @param returnType Expected Return type.
      * @return Your desired return type.
      */
@@ -124,6 +163,20 @@ public class HttpContext {
         URI uri = buildUri(partialUrl);
 
         return makePostRequest(uri, payload, returnType);
+    }
+
+    /**
+     * Execute a POST call against the partial URL.
+     * @param partialUrl Partial URL to build.
+     * @param payload Object to POST.
+     * @param returnType Expected Return type.
+     * @return Your desired return type.
+     */
+    public <T> Optional<T> POST(String partialUrl, Object payload, Map<String, Object> headers, GenericType<T> returnType){
+
+        URI uri = buildUri(partialUrl);
+
+        return makePostRequest(uri, payload, headers, returnType);
     }
 	
 	/**
@@ -136,6 +189,17 @@ public class HttpContext {
 		
 		makeDeleteRequest(uri);
 	}
+
+    /**
+     * Execute a DELETE call against the partial URL.
+     * @param partialUrl Partial URL to build.
+     */
+    public void DELETE(String partialUrl, Map<String, Object> headers){
+
+        URI uri = buildUri(partialUrl);
+
+        makeDeleteRequest(uri, headers);
+    }
 	
 	/**
 	 * Execute a GET request and return the result.
@@ -145,15 +209,29 @@ public class HttpContext {
 	 */
 	public <T> Optional<T> makeGetRequest(URI uri, GenericType<T> expectedReturnType){
 
-		WebResource webResource = this.client.resource(uri);
-		
-		ClientResponse response = webResource.type(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+		return makeGetRequest(uri, null, expectedReturnType);
+	}
+
+    /**
+     * Execute a GET request and return the result.
+     * @param uri Raw URI to call.
+     * @param expectedReturnType Type to marshall the result back to.
+     * @param headers Headers to add to the request.
+     * @return
+     */
+    public <T> Optional<T> makeGetRequest(URI uri, Map<String, Object> headers, GenericType<T> expectedReturnType){
+
+        WebResource webResource = this.client.resource(uri);
+
+        applyHeaders(webResource, headers);
+
+        ClientResponse response = webResource.type(MediaType.APPLICATION_JSON).get(ClientResponse.class);
 
         logResponse(uri, response);
 
         return extractEntityFromResponse(response, expectedReturnType);
-	}
-	
+    }
+
 	/**
 	 * Execute a PUT request.
 	 * @param uri Raw URI to call.
@@ -161,12 +239,25 @@ public class HttpContext {
 	 */
 	public void makePutRequest(URI uri, Object obj){
 		
-		WebResource webResource = this.client.resource(uri);
-		
-		ClientResponse response = webResource.type(MediaType.APPLICATION_JSON).put(ClientResponse.class, obj);
+		makePutRequest(uri, null, obj);
+	}
+
+    /**
+     * Execute a PUT request.
+     * @param uri Raw URI to call.
+     * @param obj Object to send.
+     * @param headers Headers to add to the request.
+     */
+    public void makePutRequest(URI uri, Map<String, Object> headers, Object obj){
+
+        WebResource webResource = this.client.resource(uri);
+
+        applyHeaders(webResource, headers);
+
+        ClientResponse response = webResource.type(MediaType.APPLICATION_JSON).put(ClientResponse.class, obj);
 
         logResponse(uri, response);
-	}
+    }
 	
 	/**
 	 * Execute a POST request.
@@ -175,12 +266,25 @@ public class HttpContext {
 	 */
 	public void makePostRequest(URI uri, Object obj){
 		
-		WebResource webResource = this.client.resource(uri);
-		
-		ClientResponse response = webResource.type(MediaType.APPLICATION_JSON).post(ClientResponse.class, obj);
-		
-		logResponse(uri, response);
+		makePostRequest(uri, null, obj);
 	}
+
+    /**
+     * Execute a POST request.
+     * @param uri Raw URI to call.
+     * @param headers Headers to add to the request.
+     * @param obj Object to send.
+     */
+    public void makePostRequest(URI uri, Map<String, Object> headers, Object obj){
+
+        WebResource webResource = this.client.resource(uri);
+
+        applyHeaders(webResource, headers);
+
+        ClientResponse response = webResource.type(MediaType.APPLICATION_JSON).post(ClientResponse.class, obj);
+
+        logResponse(uri, response);
+    }
 
     /**
      * Alternate form of POST allowing a return object.
@@ -192,7 +296,23 @@ public class HttpContext {
      */
     public <T> Optional<T> makePostRequest(URI uri, Object obj, GenericType<T> expectedReturnType){
 
+        return makePostRequest(uri, obj, null, expectedReturnType);
+    }
+
+    /**
+     * Alternate form of POST allowing a return object.
+     * @param uri Raw URI to call.
+     * @param obj Object to send.
+     * @param headers Headers to add to the request.
+     * @param expectedReturnType Type to marshall the result back to.
+     * @param <T>
+     * @return
+     */
+    public <T> Optional<T> makePostRequest(URI uri, Object obj, Map<String, Object> headers, GenericType<T> expectedReturnType){
+
         WebResource webResource = this.client.resource(uri);
+
+        applyHeaders(webResource, headers);
 
         ClientResponse response = webResource.type(MediaType.APPLICATION_JSON).post(ClientResponse.class, obj);
 
@@ -207,12 +327,24 @@ public class HttpContext {
 	 */
 	public void makeDeleteRequest(URI uri){
 		
-		WebResource webResource = this.client.resource(uri);
-		
-		ClientResponse response = webResource.type(MediaType.APPLICATION_JSON).delete(ClientResponse.class);
-		
-		logResponse(uri, response);
+		makeDeleteRequest(uri, null);
 	}
+
+    /**
+     * Execute a DELETE request.
+     * @param uri Raw URI to call.
+     * @param headers Headers to add to the request.
+     */
+    public void makeDeleteRequest(URI uri, Map<String, Object> headers){
+
+        WebResource webResource = this.client.resource(uri);
+
+        applyHeaders(webResource, headers);
+
+        ClientResponse response = webResource.type(MediaType.APPLICATION_JSON).delete(ClientResponse.class);
+
+        logResponse(uri, response);
+    }
 
     private <T> Optional<T> extractEntityFromResponse(ClientResponse response, GenericType<T> expectedReturnType){
 
@@ -220,6 +352,17 @@ public class HttpContext {
             return Optional.of(response.getEntity(expectedReturnType));
 
         return Optional.absent();
+    }
+
+    private void applyHeaders(WebResource webResource, Map<String, Object> headers){
+
+        if (headers != null) {
+
+            for (Map.Entry<String, Object> e : headers.entrySet()) {
+
+                webResource.header(e.getKey(), e.getValue());
+            }
+        }
     }
 
     private void logResponse(URI uri, ClientResponse response){

@@ -13,6 +13,10 @@ The library was developed in support of our AMPere project (http://github.com/Be
 
 > Note about versions.  This library was originally keeping in sync with the AMPere project (so it started it's life at 3.1.0.  I'm going to break with tradition an let it version as needed.  Sorry for any confusion.
 
+**v3.7.0**
+
+- Added Support for managing Connections.
+
 **v3.6.2**
 
 - Removed Maven Shade plugin.  The intent of the plugin was to provide a portable means of using the library.  I'm moving this out to the RabbidShell project which will use the Scala REPL and perform all of the bundling via SBT.
@@ -98,7 +102,7 @@ You can access the library via Maven:
 <dependency>
     <groupId>rabbitmq</groupId>
 	<artifactId>mgmt</artifactId>
-	<version>3.4.0</version>
+	<version>3.7.0</version>
 </dependency>
 ```
 

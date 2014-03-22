@@ -51,6 +51,9 @@ public class BaseFluent {
     static final GenericType<Policy> POLICY = new GenericType<Policy>(){};
     static final GenericType<Collection<Policy>> POLICY_COLLECTION = new GenericType<Collection<Policy>>(){};
 
+    static final GenericType<Connection> CONNECTION = new GenericType<Connection>(){};
+    static final GenericType<Collection<Connection>> CONNECTION_COLLECTION = new GenericType<Collection<Connection>>(){};
+
     static final GenericType<FederationLink> FEDERATION_LINK = new GenericType<FederationLink>(){};
     static final GenericType<Collection<FederationLink>> FEDERATION_LINK_COLLECTION = new GenericType<Collection<FederationLink>>(){};
 	

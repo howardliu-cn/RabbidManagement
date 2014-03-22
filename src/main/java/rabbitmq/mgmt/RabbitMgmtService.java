@@ -203,6 +203,17 @@ public class RabbitMgmtService {
     }
 
     /**
+     * Get operations related to parameters.
+     * @return Connection Operations.
+     */
+    public ConnectionOperations connections(){
+
+        checkInitialize();
+
+        return new ConnectionOperations(httpContext, this);
+    }
+
+    /**
      * Get operations related to federating AMQP exchanges and queues between brokers/clusters.
      * @return Federation Operations
      */

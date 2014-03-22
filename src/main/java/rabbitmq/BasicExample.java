@@ -45,6 +45,8 @@ public class BasicExample {
         queueExample(mgmt);
 
         publishConsumeExample(mgmt);
+
+        connectionExample(mgmt);
     }
 
     public static void exchangesExample(RabbitMgmtService mgmt){
@@ -86,6 +88,13 @@ public class BasicExample {
                 mgmt.queues().consume("q1", ConsumeOptions.builder().requeueMessage(false).build());
 
         log(messages);
+    }
+
+    public static void connectionExample(RabbitMgmtService mgmt){
+
+        Collection<Connection> all = mgmt.connections().all();
+
+        log(all);
     }
 
     public static void log(String template, Object... args) {
