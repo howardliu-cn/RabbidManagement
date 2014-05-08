@@ -13,6 +13,10 @@ The library was developed in support of our AMPere project (http://github.com/Be
 
 > Note about versions.  This library was originally keeping in sync with the AMPere project (so it started it's life at 3.1.0.  I'm going to break with tradition an let it version as needed.  Sorry for any confusion.
 
+**v3.7.1**
+
+- Fixed bug on the Exchange builder where the underlying Map<String, Object> of arguments is null when arg(k, v) is called.
+
 **v3.7.0**
 
 - Added Support for managing Connections.
@@ -102,7 +106,7 @@ You can access the library via Maven:
 <dependency>
     <groupId>rabbitmq</groupId>
 	<artifactId>mgmt</artifactId>
-	<version>3.7.0</version>
+	<version>3.7.1</version>
 </dependency>
 ```
 

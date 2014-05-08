@@ -1,6 +1,7 @@
 package rabbitmq.mgmt.model;
 
-import java.util.HashMap;
+import com.google.common.collect.Maps;
+
 import java.util.Map;
 
 /**
@@ -43,7 +44,7 @@ public class Queue {
 	protected String vhost = "/";
 	protected boolean durable = false;
 	protected boolean auto_delete = false;
-	protected Map<String, Object> arguments = new HashMap<String, Object>();
+	protected Map<String, Object> arguments = Maps.newHashMap();
 	
 	public Queue(){}
 

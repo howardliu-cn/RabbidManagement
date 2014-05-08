@@ -1,5 +1,7 @@
 package rabbitmq.mgmt.model;
 
+import com.google.common.collect.Maps;
+
 import java.util.Map;
 
 /**
@@ -14,8 +16,8 @@ public class Exchange {
 	protected String type = "direct";
 	protected boolean durable = false;
 	protected boolean auto_delete = false;
-	protected boolean internal = false;;
-	protected Map<String, Object> arguments;
+	protected boolean internal = false;
+	protected Map<String, Object> arguments = Maps.newHashMap();
 	
 	public Exchange(){}
 
