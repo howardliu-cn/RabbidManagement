@@ -15,8 +15,14 @@ public class BasicAuthHttpClientProvider implements HttpClientProvider {
 		this.username = username;
 		this.password = password;
 	}
-	
-	@Override
+
+    @Override
+    public boolean useSsl() {
+
+        return false;
+    }
+
+    @Override
 	public Client getClient() {
 		
 		ClientConfig clientConf = new DefaultClientConfig();

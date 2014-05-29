@@ -1,20 +1,18 @@
 package rabbitmq.httpclient;
 
-import java.io.FileInputStream;
-import java.security.KeyStore;
-
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import com.sun.jersey.client.urlconnection.HTTPSProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+import java.io.FileInputStream;
+import java.security.KeyStore;
 
 /**
  * SSL Authenticated HTTP Client Provider that not only configures SSL
@@ -66,8 +64,14 @@ public class SslWithBasicAuthHttpClientProvider implements HttpClientProvider {
 		this.username = username;
 		this.password = password;
 	}
-	
-	/**
+
+    @Override
+    public boolean useSsl() {
+
+        return true;
+    }
+
+    /**
 	 * Get a fully configured, contextually-enabled, super-heroic, HTTP Client.
 	 */
 	@Override
@@ -82,17 +86,21 @@ public class SslWithBasicAuthHttpClientProvider implements HttpClientProvider {
 		clientConf.getClasses().add(GsonMessageBodyHandler.class);
 		
 		try {
-			
+
+            String keystoreType = getKeyFormatFromExtension(this.keystore);
+
 			// Keystore
-			KeyStore clientCertStore = KeyStore.getInstance("PKCS12");
+			KeyStore clientCertStore = KeyStore.getInstance(keystoreType);
 	        clientCertStore.load(new FileInputStream(this.keystore), this.keystorePassword.toCharArray());
 	        
 	        // KeyManagerFactory
 	        KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
 	        kmf.init(clientCertStore, this.keystorePassword.toCharArray());
-	
+
+            String truststoreType = getKeyFormatFromExtension(this.truststore);
+
 	        // Truststore
-	        KeyStore remoteCertStore = KeyStore.getInstance("JKS");
+	        KeyStore remoteCertStore = KeyStore.getInstance(truststoreType);
 	        remoteCertStore.load(
 	        		new FileInputStream(this.truststore), 
 	        		// It's possible that the truststore password is null.
@@ -133,23 +141,17 @@ public class SslWithBasicAuthHttpClientProvider implements HttpClientProvider {
 	}
 	
 	/**
-	 * Default keystore type.  This will only be used if your keystore extension is not
-	 * found in the "getKeyFormatFromExtension()" method.
-	 */
-	public static String DEFAULT_KEYSTORE_TYPE = "JKS";
-	
-	/**
 	 * Using file extensions as the  for Keystore type. 
 	 * @param filename Keystore file.
 	 * @return Key Format to be used by Keystores.
 	 */
 	public static String getKeyFormatFromExtension(String filename){
 		
-		if (filename.endsWith("jks"))
+		if (filename.toLowerCase().endsWith("jks"))
 			return "JKS";
-		else if (filename.endsWith("p12"))
+		else if (filename.toLowerCase().endsWith("p12"))
 			return "PKCS12";
 		else
-			return DEFAULT_KEYSTORE_TYPE;
+			return KeyStore.getDefaultType();
 	}
 }

@@ -13,6 +13,11 @@ The library was developed in support of our AMPere project (http://github.com/Be
 
 > Note about versions.  This library was originally keeping in sync with the AMPere project (so it started it's life at 3.1.0.  I'm going to break with tradition an let it version as needed.  Sorry for any confusion.
 
+**v3.8.0**
+
+- Removed the setting for using ssl from `RabbitMmgtService` and made it a contract requirement of `HttpClientProvider`.  Instantiating the client should now make a lot more sense.
+- Added autodetection of keystore and truststore types (e.g. PKCS12 or JKS).  If neither can be detected, the framework will default to the default JVM implementation.
+
 **v3.7.1**
 
 - Fixed bug on the Exchange builder where the underlying Map<String, Object> of arguments is null when arg(k, v) is called.

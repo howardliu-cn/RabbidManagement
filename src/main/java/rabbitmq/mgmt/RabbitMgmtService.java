@@ -21,7 +21,6 @@ public class RabbitMgmtService {
 	private static final Logger logger = LoggerFactory.getLogger(RabbitMgmtService.class);
 	
 	HttpClientProvider httpClientProvider;
-	String protocol = "http";
 	String hostname;
 	int port;
 	HttpContext httpContext;
@@ -35,21 +34,15 @@ public class RabbitMgmtService {
 		this.httpClientProvider = httpClientProvider;
 	}
 	
-	public RabbitMgmtService(String hostname, int port, boolean useSsl, HttpClientProvider httpClientProvider){
-		
-		this.hostname = hostname;
-		this.port = port;
-		this.httpClientProvider = httpClientProvider;
-		this.setUseSsl(useSsl);
-	}
-	
 	/**
 	 * This needs to be called when you are done setting config properties.
 	 */
 	public RabbitMgmtService initialize(){
 		
 		Client client = httpClientProvider.getClient();
-		
+
+        String protocol = (httpClientProvider.useSsl())? "https" : "http";
+
 		httpContext = new HttpContext(client, protocol, hostname, port);
 		
 		logger.info("RabbitMgmtService initialized.");
@@ -64,16 +57,6 @@ public class RabbitMgmtService {
 	 */
 	public void setHttpClientProvider(HttpClientProvider httpClientProvider) {
 		this.httpClientProvider = httpClientProvider;
-	}
-	
-	/**
-	 * Set whether SSL should be used.  It's up to you to configure the connection
-	 * to appropriately use SSL.
-	 * @param useSsl true if we are using SSL
-	 */
-	public void setUseSsl(boolean useSsl) {
-		
-		this.protocol = (useSsl)? "https" : "http";
 	}
 
 	/**
@@ -244,8 +227,6 @@ public class RabbitMgmtService {
 
         private int port = 15672;
 
-        private boolean useSsl = false;
-
         private HttpClientProvider provider = new BasicAuthHttpClientProvider("guest", "guest");
 
         public Builder host(String host){
@@ -258,20 +239,6 @@ public class RabbitMgmtService {
         public Builder port(int port){
 
             this.port = port;
-
-            return this;
-        }
-
-        public Builder sslEnabled(){
-
-            this.useSsl = true;
-
-            return this;
-        }
-
-        public Builder useSsl(boolean shouldUseSsl){
-
-            this.useSsl = shouldUseSsl;
 
             return this;
         }
@@ -297,7 +264,7 @@ public class RabbitMgmtService {
 
         public RabbitMgmtService build(){
 
-            return new RabbitMgmtService(host, port, useSsl, provider);
+            return new RabbitMgmtService(host, port, provider);
         }
     }
 }

@@ -139,6 +139,6 @@ public class ConnectionInfo {
             provider = new BasicAuthHttpClientProvider(username, password);
         }
 
-        return new RabbitMgmtService(hostname, port, useSsl, provider);
+        return new RabbitMgmtService(hostname, port, provider);
     }
 }
