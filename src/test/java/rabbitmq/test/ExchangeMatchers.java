@@ -151,7 +151,7 @@ public class ExchangeMatchers {
         @Override
         public boolean matches(Exchange exchange) {
 
-            return exchange.isAutoDelete() == shouldBeAutoDelete;
+            return exchange.isAuto_delete() == shouldBeAutoDelete;
         }
 
         @Override

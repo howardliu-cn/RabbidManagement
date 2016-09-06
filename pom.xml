@@ -5,7 +5,7 @@
 
 	<groupId>rabbitmq</groupId>
 	<artifactId>mgmt</artifactId>
-	<version>3.8.0</version>
+	<version>3.8.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>RabbitMQ Management</name>
@@ -14,20 +14,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-
-	<repositories>
-		<repository>
-			<id>nexus.bericotechnologies.com</id>
-			<name>Berico Technologies Nexus</name>
-			<url>http://nexus.bericotechnologies.com/content/groups/public</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
 	
 	<dependencies>
 		<dependency>
@@ -97,35 +83,11 @@
             <version>16.0</version>
         </dependency>
         <dependency>
-            <groupId>com.berico.utils</groupId>
-            <artifactId>test-junit</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava-annotations</artifactId>
             <version>r03</version>
         </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>14.0.1</version>
-        </dependency>
     </dependencies>
-	
-	<distributionManagement>
-	<repository>
-		<id>nexus.bericotechnologies.com</id>
-		<name>Berico Technologies Nexus</name>
-		<url>http://nexus.bericotechnologies.com/content/repositories/releases/</url>
-	</repository>
-	
-	<snapshotRepository>
-	  <id>nexus.bericotechnologies.com</id>
-	  <name>Berico Technologies Nexus</name>
-	  <url>http://nexus.bericotechnologies.com/content/repositories/snapshots/</url>
-	</snapshotRepository>
-  </distributionManagement>
 
     <build>
         <plugins>
@@ -163,18 +125,24 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
+
+
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <layout>default</layout>
+            <name>本地Release仓库</name>
+            <uniqueVersion>false</uniqueVersion>
+            <url>http://nexus-server:8081/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <layout>default</layout>
+            <name>本地Snapshot仓库</name>
+            <uniqueVersion>false</uniqueVersion>
+            <url>http://nexus-server:8081/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
