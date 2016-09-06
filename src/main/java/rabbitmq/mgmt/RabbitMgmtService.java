@@ -81,7 +81,6 @@ public class RabbitMgmtService {
 	 * @return HttpContext
 	 */
 	public HttpContext getHttpContext(){
-		
 		return this.httpContext;
 	}
 	
@@ -90,9 +89,7 @@ public class RabbitMgmtService {
 	 * @return Overview of the node with stats about usage.
 	 */
 	public Overview overview(){
-
         checkInitialize();
-
 		return this.httpContext.GET("/overview", new GenericType<Overview>(){}).get();
 	}
 	
@@ -101,9 +98,7 @@ public class RabbitMgmtService {
 	 * @return Exchange Operations
 	 */
 	public ExchangeOperations exchanges(){
-
         checkInitialize();
-
         return new ExchangeOperations(httpContext, this);
 	}
 	
@@ -112,9 +107,7 @@ public class RabbitMgmtService {
 	 * @return Queue Operations
 	 */
 	public QueueOperations queues(){
-
         checkInitialize();
-
         return new QueueOperations(httpContext, this);
 	}
 	
@@ -123,9 +116,7 @@ public class RabbitMgmtService {
 	 * @return VHost Operations
 	 */
 	public VirtualHostOperations vhosts(){
-
         checkInitialize();
-
         return new VirtualHostOperations(httpContext, this);
 	}
 	
@@ -135,9 +126,7 @@ public class RabbitMgmtService {
 	 * @return User Operations
 	 */
 	public UserOperations users(){
-
         checkInitialize();
-
         return new UserOperations(httpContext, this);
 	}
 	

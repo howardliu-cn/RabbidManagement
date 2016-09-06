@@ -10,7 +10,8 @@ import java.util.Map;
  * @author Richard Clayton (Berico Technologies)
  */
 public class Queue {
-
+    @ProducedByRabbit
+    protected String state;
     @ProducedByRabbit
 	protected long memory;
     @ProducedByRabbit
@@ -75,6 +76,11 @@ public class Queue {
 		this.auto_delete = auto_delete;
 		this.arguments = arguments;
 	}
+
+    @ProducedByRabbit
+    public String getState() {
+        return state;
+    }
 
     @ProducedByRabbit
 	public long getMemory() {
