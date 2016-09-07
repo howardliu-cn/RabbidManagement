@@ -26,6 +26,7 @@ public class Channel {
     private String user;
     private String vhost;
     private ConnectionDetails connection_details;
+    private MessageStat message_stats;
 
     public String getIdle_since() {
         return idle_since;
@@ -163,6 +164,14 @@ public class Channel {
         this.connection_details = connection_details;
     }
 
+    public MessageStat getMessage_stats() {
+        return message_stats;
+    }
+
+    public void setMessage_stats(MessageStat message_stats) {
+        this.message_stats = message_stats;
+    }
+
     @Override
     public String toString() {
         return "Channel{" +
@@ -184,5 +193,74 @@ public class Channel {
                 ", vhost='" + vhost + '\'' +
                 ", connection_details=" + connection_details +
                 '}';
+    }
+
+    public static class MessageStat{
+        private long ack;
+        private MessageDetails ack_details;
+        private long deliver;
+        private MessageDetails deliver_details;
+        private long deliver_get;
+        private MessageDetails deliver_get_details;
+
+        public long getAck() {
+            return ack;
+        }
+
+        public void setAck(long ack) {
+            this.ack = ack;
+        }
+
+        public MessageDetails getAck_details() {
+            return ack_details;
+        }
+
+        public void setAck_details(MessageDetails ack_details) {
+            this.ack_details = ack_details;
+        }
+
+        public long getDeliver() {
+            return deliver;
+        }
+
+        public void setDeliver(long deliver) {
+            this.deliver = deliver;
+        }
+
+        public MessageDetails getDeliver_details() {
+            return deliver_details;
+        }
+
+        public void setDeliver_details(MessageDetails deliver_details) {
+            this.deliver_details = deliver_details;
+        }
+
+        public long getDeliver_get() {
+            return deliver_get;
+        }
+
+        public void setDeliver_get(long deliver_get) {
+            this.deliver_get = deliver_get;
+        }
+
+        public MessageDetails getDeliver_get_details() {
+            return deliver_get_details;
+        }
+
+        public void setDeliver_get_details(MessageDetails deliver_get_details) {
+            this.deliver_get_details = deliver_get_details;
+        }
+
+        @Override
+        public String toString() {
+            return "MessageStat{" +
+                    "ack=" + ack +
+                    ", ack_details=" + ack_details +
+                    ", deliver=" + deliver +
+                    ", deliver_details=" + deliver_details +
+                    ", deliver_get=" + deliver_get +
+                    ", deliver_get_details=" + deliver_get_details +
+                    '}';
+        }
     }
 }
