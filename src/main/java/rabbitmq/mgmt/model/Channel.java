@@ -202,6 +202,8 @@ public class Channel {
         private MessageDetails deliver_details;
         private long deliver_get;
         private MessageDetails deliver_get_details;
+        private long publish;
+        private MessageDetails publish_details;
 
         public long getAck() {
             return ack;
@@ -251,6 +253,22 @@ public class Channel {
             this.deliver_get_details = deliver_get_details;
         }
 
+        public long getPublish() {
+            return publish;
+        }
+
+        public void setPublish(long publish) {
+            this.publish = publish;
+        }
+
+        public MessageDetails getPublish_details() {
+            return publish_details;
+        }
+
+        public void setPublish_details(MessageDetails publish_details) {
+            this.publish_details = publish_details;
+        }
+
         @Override
         public String toString() {
             return "MessageStat{" +
@@ -260,6 +278,8 @@ public class Channel {
                     ", deliver_details=" + deliver_details +
                     ", deliver_get=" + deliver_get +
                     ", deliver_get_details=" + deliver_get_details +
+                    ", publish=" + publish +
+                    ", publish_details=" + publish_details +
                     '}';
         }
     }
