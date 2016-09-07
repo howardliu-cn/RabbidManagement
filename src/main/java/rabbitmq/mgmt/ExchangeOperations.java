@@ -3,10 +3,7 @@ package rabbitmq.mgmt;
 import com.google.common.base.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rabbitmq.mgmt.model.Binding;
-import rabbitmq.mgmt.model.Exchange;
-import rabbitmq.mgmt.model.Message;
-import rabbitmq.mgmt.model.PublishResponse;
+import rabbitmq.mgmt.model.*;
 
 import java.util.Collection;
 
@@ -30,9 +27,7 @@ public class ExchangeOperations extends BaseFluent {
 	 * @return Collection of Exchanges
 	 */
 	public Collection<Exchange> all(){
-		
 		logger.debug("Getting all exchanges on every vhost.");
-		
 		return HTTP.GET("/exchanges", EXCHANGE_COLLECTION).get();
 	}
 	
@@ -41,9 +36,7 @@ public class ExchangeOperations extends BaseFluent {
 	 * @return Collection of Exchanges
 	 */
 	public Collection<Exchange> allOnDefault(){
-		
 		logger.debug("Getting exchanges at from the default vhost.");
-		
 		return allOnVHost("/").get();
 	}
 	
@@ -53,9 +46,7 @@ public class ExchangeOperations extends BaseFluent {
 	 * @return Collection of Exchanges
 	 */
 	public Optional<Collection<Exchange>> allOnVHost(String vhost) {
-		
 		logger.debug("Getting exchanges at path: {}", vhost);
-		
 		return HTTP.GET(
 			String.format("/exchanges/%s", encodeSlashes(vhost)), EXCHANGE_COLLECTION);
 	}
@@ -66,7 +57,6 @@ public class ExchangeOperations extends BaseFluent {
 	 * @return the Exchange
 	 */
 	public Optional<Exchange> get(String name){
-		
 		return get("/", name);
 	}
 	
@@ -77,58 +67,43 @@ public class ExchangeOperations extends BaseFluent {
 	 * @return the Exchange
 	 */
 	public Optional<Exchange> get(String vhost, String name){
-		
 		return HTTP.GET(
 			String.format("/exchanges/%s/%s", encodeSlashes(vhost), name), EXCHANGE);
 	}
 	
 	
 	public ExchangeOperations create(Exchange exchange){
-		
 		String url = String.format("/exchanges/%s/%s", encodeSlashes(exchange.getVhost()), exchange.getName());
-		
 		HTTP.PUT(url, exchange);
-		
 		return this;
 	}
 
     public ExchangeOperations publish(String exchangeName, Message message){
-
         return this.publish("/", exchangeName, message);
     }
 
     public ExchangeOperations publish(String vhost, String exchangeName, Message message){
-
         String url = String.format("/exchanges/%s/%s/publish", encodeSlashes(vhost), exchangeName);
-
         HTTP.POST(url, message);
-
         return this;
     }
 
     public Optional<PublishResponse> publishAndConfirm(String exchangeName, Message message){
-
         return this.publishAndConfirm("/", exchangeName, message);
     }
 
     public Optional<PublishResponse> publishAndConfirm(String vhost, String exchangeName, Message message){
-
         String url = String.format("/exchanges/%s/%s/publish", encodeSlashes(vhost), exchangeName);
-
         return HTTP.POST(url, message, PUBLISH_RESPONSE);
     }
 
     public ExchangeOperations delete(String name){
-
         return this.delete("/", name);
     }
 
 	public ExchangeOperations delete(String vhost, String name){
-		
 		String url = String.format("/exchanges/%s/%s", encodeSlashes(vhost), name);
-		
 		HTTP.DELETE(url);
-		
 		return this;
 	}
 	
@@ -150,7 +125,7 @@ public class ExchangeOperations extends BaseFluent {
 	 */
 	public Optional<Collection<Binding>> downstreamBindings(String vhost, String exchangeName){
 		
-		return getBindings(vhost, exchangeName, "source");
+		return getBindings(vhost, exchangeName, Direction.source);
 	}
 	
 	/**
@@ -159,7 +134,6 @@ public class ExchangeOperations extends BaseFluent {
 	 * @return Collection of Bindings
 	 */
 	public Optional<Collection<Binding>> upstreamBindings(String exchangeName){
-		
 		return upstreamBindings("/", exchangeName);
 	}
 	
@@ -171,7 +145,7 @@ public class ExchangeOperations extends BaseFluent {
 	 */
 	public Optional<Collection<Binding>> upstreamBindings(String vhost, String exchangeName){
 		
-		return getBindings(vhost, exchangeName, "destination");
+		return getBindings(vhost, exchangeName, Direction.destination);
 	}
 	
 	/**
@@ -181,10 +155,10 @@ public class ExchangeOperations extends BaseFluent {
 	 * @param direction Direction (source, destination)
 	 * @return Collection of Bindings
 	 */
-    Optional<Collection<Binding>> getBindings(String vhost, String exchangeName, String direction){
+    Optional<Collection<Binding>> getBindings(String vhost, String exchangeName, Direction direction){
 		
 		return HTTP.GET(
 			String.format("/exchanges/%s/%s/bindings/%s", 
-				encodeSlashes(vhost), exchangeName, direction), BINDING_COLLECTION);
+				encodeSlashes(vhost), exchangeName, direction.getDirection()), BINDING_COLLECTION);
 	}
 }

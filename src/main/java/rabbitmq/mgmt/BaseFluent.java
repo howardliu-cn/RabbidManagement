@@ -21,7 +21,10 @@ public class BaseFluent {
 	 */
 	static final GenericType<Exchange> EXCHANGE = new GenericType<Exchange>(){};
 	static final GenericType<Collection<Exchange>> EXCHANGE_COLLECTION = new GenericType<Collection<Exchange>>(){};
-	
+
+    static final GenericType<Channel> CHANNEL = new GenericType<Channel>(){};
+    static final GenericType<Collection<Channel>> CHANNEL_COLLECTION = new GenericType<Collection<Channel>>(){};
+
 	static final GenericType<Binding> BINDING = new GenericType<Binding>(){};
 	static final GenericType<Collection<Binding>> BINDING_COLLECTION = new GenericType<Collection<Binding>>(){};
 	

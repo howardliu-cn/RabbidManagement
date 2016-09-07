@@ -185,19 +185,21 @@ public class RabbitMgmtService {
         return new ConnectionOperations(httpContext, this);
     }
 
+    public ChannelOperations channels(){
+        checkInitialize();
+        return new ChannelOperations(httpContext, this);
+    }
+
     /**
      * Get operations related to federating AMQP exchanges and queues between brokers/clusters.
      * @return Federation Operations
      */
     public FederationOperations federation(){
-
         checkInitialize();
-
         return new FederationOperations(httpContext, this);
     }
 
     private void checkInitialize(){
-
         if (httpContext == null) initialize();
     }
 

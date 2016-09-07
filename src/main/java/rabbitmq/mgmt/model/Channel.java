@@ -1,35 +1,31 @@
-package rabbitmq.mgmt.model.federation;
+package rabbitmq.mgmt.model;
+
+import rabbitmq.mgmt.model.federation.ConnectionDetails;
 
 /**
- * @author Richard Clayton (Berico Technologies)
- * @author liuxh (http://www.howardliu.cn)
+ * <br/>created at 16-9-7
+ *
+ * @author liuxh
+ * @since 1.2.0
  */
-public class LocationChannel {
-    protected ConnectionDetails connection_details;
-    protected String idle_since;
-    protected boolean transactional;
-    protected boolean confirm;
-    protected int consumer_count;
-    protected int messages_unacknowledged;
-    protected int messages_unconfirmed;
-    protected int messages_uncommitted;
-    protected int acks_uncommitted;
-    protected int prefetch_count;
-    protected int global_prefetch_count;
-    protected String state;
-    protected String node;
-    protected String name;
-    protected int number;
-    protected String user;
-    protected String vhost;
-
-    public ConnectionDetails getConnection_details() {
-        return connection_details;
-    }
-
-    public void setConnection_details(ConnectionDetails connection_details) {
-        this.connection_details = connection_details;
-    }
+public class Channel {
+    private String idle_since;
+    private boolean transactional;
+    private boolean confirm;
+    private long consumer_count;
+    private long messages_unacknowledged;
+    private long messages_unconfirmed;
+    private long messages_uncommitted;
+    private long acks_uncommitted;
+    private long prefetch_count;
+    private long global_prefetch_count;
+    private String state;
+    private String node;
+    private String name;
+    private long number;
+    private String user;
+    private String vhost;
+    private ConnectionDetails connection_details;
 
     public String getIdle_since() {
         return idle_since;
@@ -55,59 +51,59 @@ public class LocationChannel {
         this.confirm = confirm;
     }
 
-    public int getConsumer_count() {
+    public long getConsumer_count() {
         return consumer_count;
     }
 
-    public void setConsumer_count(int consumer_count) {
+    public void setConsumer_count(long consumer_count) {
         this.consumer_count = consumer_count;
     }
 
-    public int getMessages_unacknowledged() {
+    public long getMessages_unacknowledged() {
         return messages_unacknowledged;
     }
 
-    public void setMessages_unacknowledged(int messages_unacknowledged) {
+    public void setMessages_unacknowledged(long messages_unacknowledged) {
         this.messages_unacknowledged = messages_unacknowledged;
     }
 
-    public int getMessages_unconfirmed() {
+    public long getMessages_unconfirmed() {
         return messages_unconfirmed;
     }
 
-    public void setMessages_unconfirmed(int messages_unconfirmed) {
+    public void setMessages_unconfirmed(long messages_unconfirmed) {
         this.messages_unconfirmed = messages_unconfirmed;
     }
 
-    public int getMessages_uncommitted() {
+    public long getMessages_uncommitted() {
         return messages_uncommitted;
     }
 
-    public void setMessages_uncommitted(int messages_uncommitted) {
+    public void setMessages_uncommitted(long messages_uncommitted) {
         this.messages_uncommitted = messages_uncommitted;
     }
 
-    public int getAcks_uncommitted() {
+    public long getAcks_uncommitted() {
         return acks_uncommitted;
     }
 
-    public void setAcks_uncommitted(int acks_uncommitted) {
+    public void setAcks_uncommitted(long acks_uncommitted) {
         this.acks_uncommitted = acks_uncommitted;
     }
 
-    public int getPrefetch_count() {
+    public long getPrefetch_count() {
         return prefetch_count;
     }
 
-    public void setPrefetch_count(int prefetch_count) {
+    public void setPrefetch_count(long prefetch_count) {
         this.prefetch_count = prefetch_count;
     }
 
-    public int getGlobal_prefetch_count() {
+    public long getGlobal_prefetch_count() {
         return global_prefetch_count;
     }
 
-    public void setGlobal_prefetch_count(int global_prefetch_count) {
+    public void setGlobal_prefetch_count(long global_prefetch_count) {
         this.global_prefetch_count = global_prefetch_count;
     }
 
@@ -135,11 +131,11 @@ public class LocationChannel {
         this.name = name;
     }
 
-    public int getNumber() {
+    public long getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
+    public void setNumber(long number) {
         this.number = number;
     }
 
@@ -159,11 +155,18 @@ public class LocationChannel {
         this.vhost = vhost;
     }
 
+    public ConnectionDetails getConnection_details() {
+        return connection_details;
+    }
+
+    public void setConnection_details(ConnectionDetails connection_details) {
+        this.connection_details = connection_details;
+    }
+
     @Override
     public String toString() {
-        return "LocationChannel{" +
-                "connection_details=" + connection_details +
-                ", idle_since='" + idle_since + '\'' +
+        return "Channel{" +
+                "idle_since='" + idle_since + '\'' +
                 ", transactional=" + transactional +
                 ", confirm=" + confirm +
                 ", consumer_count=" + consumer_count +
@@ -179,6 +182,7 @@ public class LocationChannel {
                 ", number=" + number +
                 ", user='" + user + '\'' +
                 ", vhost='" + vhost + '\'' +
+                ", connection_details=" + connection_details +
                 '}';
     }
 }
