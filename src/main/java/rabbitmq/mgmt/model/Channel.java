@@ -2,6 +2,9 @@ package rabbitmq.mgmt.model;
 
 import rabbitmq.mgmt.model.federation.ConnectionDetails;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * <br/>created at 16-9-7
  *
@@ -27,6 +30,9 @@ public class Channel {
     private String vhost;
     private ConnectionDetails connection_details;
     private MessageStat message_stats;
+    private List<String> publishes = new ArrayList<String>();
+    private List<String> deliveries = new ArrayList<String>();
+    private List<CustomDetails> consumer_details;
 
     public String getIdle_since() {
         return idle_since;
@@ -170,6 +176,30 @@ public class Channel {
 
     public void setMessage_stats(MessageStat message_stats) {
         this.message_stats = message_stats;
+    }
+
+    public List<String> getPublishes() {
+        return publishes;
+    }
+
+    public void setPublishes(List<String> publishes) {
+        this.publishes = publishes;
+    }
+
+    public List<String> getDeliveries() {
+        return deliveries;
+    }
+
+    public void setDeliveries(List<String> deliveries) {
+        this.deliveries = deliveries;
+    }
+
+    public List<CustomDetails> getConsumer_details() {
+        return consumer_details;
+    }
+
+    public void setConsumer_details(List<CustomDetails> consumer_details) {
+        this.consumer_details = consumer_details;
     }
 
     @Override
